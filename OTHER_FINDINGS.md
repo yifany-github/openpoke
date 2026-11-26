@@ -29,6 +29,8 @@ Every fix has a test that fails without it.
 | 13 | Mine | A memory compaction finishing after "clear history" could resurrect old memory. | `agent_memory.py`, `routes/chat.py` | Re-check the log before saving. Clearing history runs on the event loop. |
 | 14 | Mine | Sharing one batch manager between triggers and user requests made user results wait on trigger runs. | `trigger_scheduler.py` | **Reverted.** A separate batch per trigger (upstream's design) is right. |
 | 15 | Mine | Atomic roster writes left the file at mode 0600. | `roster.py` | `chmod 0644`. |
+| 16 | **High** | **Execution agents didn't know the time or the user's timezone.** The prompt said times use "the user's automatically detected timezone" but never said which zone, or what time it was. The zone could also only be set by the browser, so a zone the user stated in chat was ignored. In a live run, "remind me in 1 minute" after "I'm in New York" was scheduled 5 hours late. | `execution_agent/agent.py`, `interaction_agent/tools.py` | Every execution prompt states the current time with its zone. New `set_timezone` tool for the interaction agent, validated as an IANA name and persisted to the timezone store. |
+| 17 | Low | **Ids cut off by truncation.** Tool results are stored in agent memory truncated to 500 chars, which can drop the thread, message and draft ids that later turns need. | `execution_agent/agent.py` | Ids and email addresses that fall past the cut are extracted (from JSON keys like `id`, `threadId`, `*_id`) and appended. |
 
 ## Found, not fixed (with proposed fix)
 
@@ -36,7 +38,5 @@ Every fix has a test that fails without it.
 |---|---|---|---|
 | **Security** | **An OpenRouter API key is in the public git history.** `b5695fa` (2025-09-17) committed a server access log whose URLs carry `api_key=sk-or-v1-…`. `f715ae0` deleted the file, but every clone and fork still contains it. | upstream history | Revoke the key. Optionally purge it with `git filter-repo`. Never accept credentials in query strings. The current server reads keys from `.env`, and upstream gitignored `*.log` in `6fa16ac`. |
 | Medium | **One global batch.** A slow execution agent holds back every other agent's result dispatched in the same window, up to the 90 s timeout. | `execution_agent/batch_manager.py` | Batch per interaction turn (pass the turn's batch id). Deliver each result as it lands, with a short debounce. |
-| Medium | **A timezone given in chat is ignored.** The timezone only comes from the browser. In a live run, "remind me in 1 minute" after "I'm in New York" was scheduled 5 hours late. | `services/timezone_store.py` | A `set_timezone` tool for the interaction agent. Stamp the current time *with its zone* into execution instructions. |
-| Low | Tool results are truncated to 500 chars in agent memory, which can cut off the ids that memory needs. | `execution_agent/agent.py` | Extract ids (message, thread, draft) structurally before truncating. |
 | Low | Execution logs are never trimmed and are re-parsed several times per run. The prompt is bounded; disk and CPU are not. | `log_store.py` | Archive runs already covered by the summary; cache parsed runs. |
 | Ops | All locks are per process. Several server workers would break turn serialization and per-agent run locks. | runtimes | Single worker (as shipped), or move locks and queues to Redis or SQLite. |

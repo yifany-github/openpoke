@@ -28,7 +28,7 @@ directions:
 | Correct agent chosen, independent workload (40 paired queries) | 20/40 (50%) | **35/40 (88%)**, paired McNemar p < 0.001 |
 | Silent misroute (wrong agent, or a needless new agent) | 20/40 | **5/40** |
 | Router prompt tokens per request | 9,749 | 8,149 |
-| Execution prompt after 200 reuses of one agent | 186,587 tok | **≤ 11,372 tok** |
+| Execution prompt after 200 reuses of one agent | 186,587 tok | **≤ 14,717 tok** |
 | Facts from compacted runs still answerable (8 questions, real summarizer) | 8/8 (full log) | **8/8** with half the tokens |
 
 Ablations on the same 40 queries (EVALUATION.md §4.2) show where the gain comes from:
@@ -59,6 +59,21 @@ Other problems found in OpenPoke, including a retired default model that stopped
 from running at all, are in [OTHER_FINDINGS.md](OTHER_FINDINGS.md).
 
 ---
+
+## 0. Relation to the upstream author's diagnosis
+
+The OpenPoke [explainer](https://www.shloked.com/writing/openpoke) names this problem
+itself: "Execution Agent Overload". It notes that the full roster goes to the interaction
+agent on every request, and that "after days of use, you might have hundreds of specialized
+agents". It sketches four remedies. Here is how this fork maps to them:
+
+| Author's suggestion | What this fork does | Evidence |
+|---|---|---|
+| Semantic search over agent descriptions | Agents get descriptions: an LLM writes one after the first run, and compaction refreshes it. The router sees the top-20 by BM25 over name + description, and the `search_agents` tool reaches the rest. **Lexical, not embedding-based, on purpose**: deterministic and testable, with its weak spot measured (synonyms account for most of the remaining failures). Embeddings are the next step. | Correct routing 50% → 88% on an independent workload |
+| Archive dormant agents | A **soft archive**: agents that drop out of the top-K leave the prompt and come back when relevant. No separate state has to stay consistent with triggers, logs and memory. | Top-K matches the full roster's accuracy (35 vs 35 of 40) at 1/3.8 of the tokens |
+| Cluster related agents | No clustering of existing agents. **Near-duplicates are stopped at creation**: a respelled name reuses the agent; a similar name is bounced back with the candidates and their descriptions. Merging existing clusters is future work and needs stable ids. | 20/20 same-thread name pairs caught (2 auto-reused, 18 sent back to the model) |
+| Hot cache of recently active agents | A recency term in the ranking (3-day half-life), plus pinning of agents with active triggers or named in the current turn | "Person-only" requests: 0/8 → 7/8 |
+| *(not in the post)* | **Depth**: each agent's own history grew without bound. It is now bounded by a rolling summary. | 186k → ≤ 14.7k tokens after 200 reuses; 8/8 old facts still answerable |
 
 ## 1. Where the overload is in the code
 
@@ -140,7 +155,7 @@ The examples added to the prompt use names that appear in neither evaluation wor
 
 ## 3. Testing and evaluation (summary)
 
-- **62 unit and integration tests** run with no network; any real API call fails the test.
+- **67 unit and integration tests** run with no network; any real API call fails the test.
   Every bug fix has a test that was checked to **fail without the fix**.
 - **Evaluators** in `evals/`:
   - prompt growth, before and after;

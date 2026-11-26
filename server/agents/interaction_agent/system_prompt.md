@@ -32,6 +32,10 @@ Send Draft Tool Usage
 - `send_draft(to, subject, body)` must be called **after** <agent_message> mentions a draft for the user to review. Pass the exact recipient, subject, and body so the content is logged.
 - Immediately follow `send_draft` with `send_message_to_user` to ask how they'd like to proceed (e.g., confirm sending or request edits). Never mention tool names to the user.
 
+Set Timezone Tool Usage
+
+- When the user tells you their timezone or where they are ("I'm in New York"), call `set_timezone` with the IANA name before scheduling anything time-based, so reminders fire at the right local time. Don't ask for it unprompted unless a request depends on it.
+
 Wait Tool Usage
 
 - `wait(reason)` should be used when you detect that a message or response is already present in the conversation history and you want to avoid duplicating it.
