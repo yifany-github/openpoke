@@ -2,35 +2,49 @@
 
 ## TL;DR
 
-OpenPoke's execution agents live forever, but nothing manages their lifecycle. Agents have
-no description, never retire, and their memory is never compacted. Overload shows up in two
-directions that the system prompt pushes at the same time:
+**Problem.** OpenPoke's execution agents live forever, but nothing manages them. They have no
+description, never retire, and their memory is never compacted. Overload shows up in two
+directions:
 
-- **Width (too many agents).** Every agent ever created is listed by name only in every
-  interaction-agent turn. Routing gets harder as the roster grows: the model can't tell
-  agents apart, so it creates near-duplicates, which makes routing harder still.
-- **Depth (agents too fat).** Every run of an execution agent injects the agent's *entire*
-  log into its system prompt. This is where the tokens actually explode: about 930 tokens per
-  reuse with no cap. After 200 reuses one call is ~187k tokens: the whole context window of
-  the model OpenPoke shipped with (Sonnet 4, 200k). Today's 1M-context models would still
-  run it, at ~750k input tokens (~$1.50 on Sonnet 5.5) per task.
+- **Width.** Every agent ever created is listed by name only in every interaction-agent
+  turn. With hundreds of agents, the router can't tell "Follow-ups with Dmitri" from the
+  agent that actually owns Dmitri's quote. It sends work to the wrong thread or forks a new
+  one.
+  *Measured:* on an independent 300-agent workload, the original system routed **50%** of
+  follow-up requests to the wrong agent or a needless new one.
+- **Depth.** Every run of an execution agent re-sends that agent's **entire** history,
+  about 930 tokens more per reuse, with no cap. After 200 reuses one call is ~187k tokens.
 
-The fix:
+**Fix.**
+1. A registry with metadata. The router sees only pinned agents plus the top-20 relevant
+   ones, each with a one-line LLM-written description. It can `search_agents` for the rest,
+   and near-duplicate names are bounced back to the model.
+2. Bounded agent memory: the last 5 runs stay raw, older runs fold into a rolling summary.
+
+**Results** (Sonnet 5.5; details and methodology in [EVALUATION.md](EVALUATION.md)):
 
 | | Before | After |
 |---|---|---|
-| Roster block, 300 agents | 3,263 tok, names only | **928 tok** (top 20 + descriptions), −72% |
-| Roster block, 1,000 agents | 11,230 tok | **942 tok**, −92% |
-| Execution prompt after 50 reuses | 47,237 tok | **≤ 11,372 tok** (peak, worst-case summary) |
-| Execution prompt after 200 reuses | 186,587 tok (≈ Sonnet 4's 200k window) | **≤ 11,372 tok** |
-| Same-thread names creating a duplicate agent | 20 / 20 | **0 / 20** (2 auto-reused, 18 flagged) |
-| Target agent visible to the router (offline, 300 agents) | 100% (by listing everything) | **97.5%** at K=20, using 61% fewer tokens |
-| **Live routing, Sonnet 5.5, unseen workload: silent misroutes** (wrong agent + needless new agent) | 10 / 30 (33%) | **2 / 30 (7%)**, p = 0.01 |
-| Live routing: correct agent chosen | 20 / 30 (67%) | **28 / 30 (93%)**, p = 0.01 |
+| Correct agent chosen, independent workload (40 paired queries) | 20/40 (50%) | **35/40 (88%)**, paired McNemar p < 0.001 |
+| Silent misroute (wrong agent, or a needless new agent) | 20/40 | **5/40** |
+| Router prompt tokens per request | 9,749 | 8,149 |
+| Execution prompt after 200 reuses of one agent | 186,587 tok | **≤ 11,372 tok** |
+| Facts from compacted runs still answerable (8 questions, real summarizer) | 8/8 (full log) | **8/8** with half the tokens |
 
-Numbers come from `evals/` (see [How it was measured](#how-it-was-measured)). Token counts
-use `cl100k_base` as a stand-in for Claude's tokenizer (±15%). What matters is the shape of
-the curves, not the exact values.
+Ablations on the dev workload (EVALUATION.md §4) show where the gain comes from:
+- **The accuracy comes from descriptions and recency.** Listing all 300 agents with
+  descriptions routes about as well as the top-20.
+- **Top-K is what keeps it affordable.** Listing all agents with descriptions costs ~37k
+  tokens per request, 4.5× more.
+
+The main caveats (EVALUATION.md §6):
+- single run per condition;
+- synthetic workloads, written by me but kept independent of prompt tuning;
+- the "person-only" label (most recent thread) matches a rule in the prompt. Excluding
+  those queries, the result is 20/32 → 28/32.
+
+Other problems found in OpenPoke, including a retired default model that stopped the app
+from running at all, are in [OTHER_FINDINGS.md](OTHER_FINDINGS.md).
 
 ---
 
@@ -38,377 +52,108 @@ the curves, not the exact values.
 
 | Location | Problem |
 |---|---|
-| `services/execution/roster.py` | Roster is a JSON `list[str]`. It is append-only, has no metadata, and can only be cleared wholesale. |
+| `services/execution/roster.py` | The roster is a JSON `list[str]`: append-only, no metadata, clearable only wholesale. |
 | `agents/interaction_agent/agent.py::_render_active_agents` | Emits `<agent name="…"/>` for **every** agent on **every** turn. |
-| `agents/interaction_agent/tools.py::send_message_to_agent` | New-vs-reuse decided by **exact string** match on an LLM-invented name. |
-| `services/execution/log_store.py::_slugify` | Log files are keyed by slug. "Email to Alice" and "email-to-alice" are 2 roster agents sharing **1 log file**, so their memories cross. |
-| `agents/execution_agent/agent.py::build_system_prompt_with_history` | Injects the full log every run; `conversation_limit` defaults to `None`. |
-| `agents/interaction_agent/system_prompt.md` | "split into as much concurrent calls as possible" (pushes width) plus "prefer existing agent… even if the name is unrelated" (pushes depth). |
+| `agents/interaction_agent/tools.py::send_message_to_agent` | New-vs-reuse is decided by **exact string match** on an LLM-invented name. |
+| `services/execution/log_store.py::_slugify` | Logs are keyed by slug, so "Email to Alice" and "email-to-alice" are two agents sharing one log file. |
+| `agents/execution_agent/agent.py::build_system_prompt_with_history` | Injects the full log every run (`conversation_limit` defaults to `None`). |
+| `agents/interaction_agent/system_prompt.md` | Says to "split into as much concurrent calls as possible", which pushes width, and to "prefer existing agent… even if the name is unrelated", which pushes depth. |
 
-Measured baseline (`evals/results/prompt_growth_baseline.json`, original code):
-
-- Width: about 11 tokens per agent, linear. 300 agents is 1.5× the whole system prompt.
-- Depth: about 930 tokens per run, linear and unbounded. 200 reuses is ~187k tokens per LLM call
-  (about 750k per run at ~4 calls).
-
-At realistic scale, width is not mainly a token problem: 3k tokens is affordable. Width is a
-**routing-quality** problem. Depth is the **token** problem. Each needed its own fix.
+Measured on the original code (`evals/prompt_growth.py`):
+- **Width** costs about 11 tokens per agent. At 300 agents that's ~3.3k tokens: affordable,
+  so **width is mainly a routing-quality problem**.
+- **Depth** grows without bound, so **depth is the token problem**.
 
 ## 2. Design
 
-### 2a. Depth: bounded agent memory (`services/execution/agent_memory.py`)
+### Width: registry, relevance-ranked roster, search, dedupe
 
-The history an agent sees is now:
+- **Registry** (`roster.py`). Each agent has a `name`, a normalized `key` (the same slug used
+  for logs, memory and triggers), a `description`, `created_at`, `last_used_at` and
+  `run_count`. Writes are locked read-modify-write with atomic replace. The legacy list
+  format migrates on load.
+- **Descriptions** (`agent_memory.describe`). After an agent's first run, one small-model
+  call (Haiku) writes one line covering the people, organisation, email and topic. Later
+  compactions refresh it. Until it lands, a heuristic stands in: "Started for: <first
+  instruction> | Latest: <result>".
+- **What the router sees** (`agent_ranker.py`):
+  - pinned agents first: those with an active trigger, or named in the current turn;
+  - then the top-K by `0.7·BM25(name×2 + description) + 0.3·recency` (3-day half-life).
+    The query is the current message plus the conversation tail, so "yes, send it" still
+    finds the agent that drafted it;
+  - then `<more_agents count=N>` with a pointer to `search_agents`.
+
+  There is no explicit archive state: agents that fall out of the top-K are effectively
+  archived and return when relevant.
+- **Dedupe.** A respelled name ("email-to-alice") reuses the existing agent automatically.
+  A *similar* name ("Reply to Alice re lunch" vs "Email to Alice") is **rejected with the
+  candidates and their descriptions**, so the model reuses one or passes `force_new=true`.
+  Auto-merging is deliberately avoided: "Alice lunch" and "Alice contract" may be parallel
+  work. A false flag costs one LLM round trip; a wrong merge corrupts memory.
+- **Why BM25.** It is deterministic, dependency-free and testable, and its weak spot
+  (synonyms, below) is measured. The scorer is a pure function, so embeddings can replace it
+  locally.
+- **Why K = 20.** It was the smallest K with ≥95% offline recall on the dev workload. On the
+  independent workload, recall at K = 20 is 91%, which is part of why `search_agents`
+  exists.
+
+### Depth: bounded agent memory (`agent_memory.py`)
 
 ```
-## Memory summary (runs 1..C)     <- rolling LLM summary, hard cap 4,000 chars
-## Recent runs (C+1..N)           <- raw log, between WINDOW and WINDOW+BATCH-1 runs
+## Memory summary (runs 1..C)   <- rolling summary, hard cap 4,000 chars
+## Recent runs (C+1..N)         <- raw, between 5 and 9 runs
 ```
 
-- After each run, if the number of unsummarized runs reaches `WINDOW + BATCH` (5 + 5 by
-  default), a **background** task folds the oldest ones into the summary and keeps the newest
-  `WINDOW` runs raw. This mirrors the conversation summarizer the interaction agent already
-  has, so the two memory layers are now symmetric. The fold is incremental (previous summary
-  plus the new runs only) and single-flight per agent.
-- The summary prompt requires keeping identifiers verbatim (emails, thread, draft and trigger
-  ids, RRULEs). Agent memory is useless if "reply to that thread" loses the thread id.
-- **Fallback.** If summarization fails or no LLM is configured, the prompt is still bounded:
-  only the newest `WINDOW + BATCH` raw runs are shown, with an explicit
-  `N older run(s) omitted` note. The bound never depends on the LLM.
-- The summary's first line is `DESCRIPTION: …`. That one line becomes the agent's
-  description in the registry (2b), so a single LLM call serves both fixes.
+- When 10 runs are unsummarized, a background task folds all but the newest 5 into the
+  summary. The fold is incremental and runs once at a time per agent. This mirrors the
+  conversation summarizer the interaction agent already had.
+- The summary prompt requires identifiers verbatim: emails, thread, draft and trigger ids,
+  RRULEs.
+- **The bound never depends on the LLM.** If summarization fails, only the newest 10 raw runs
+  are shown, with an "N older runs omitted" note.
+- Rejected alternatives:
+  - a pure sliding window, which drops the long-lived context that makes persistent agents
+    worth having;
+  - retrieval over one agent's log, which is more machinery than needed.
 
-Alternatives considered:
-- **Pure sliding window.** Cheapest, but it drops exactly the long-lived context that makes
-  persistent agents worth having.
-- **Retrieval over the agent's own log.** More machinery than one agent's history needs today.
+### Prompt changes
 
-### 2b. Width: a registry, a relevance-ranked roster, and search
+- Parallelize only independent work.
+- Name agents after the thread of work they own.
+- Status questions belong to the agent that owns the work.
+- When one candidate clearly stands out, act on it and say which one; otherwise ask.
 
-**Registry** (`roster.py`). Each agent record now holds `name`, `key` (normalized identity,
-identical to the log slug), `description`, `created_at`, `last_used_at` and `run_count`.
-Saves are atomic (temp file + rename). The legacy list format migrates on load, and
-slug-colliding duplicates collapse.
+The examples added to the prompt use names that appear in neither evaluation workload. Upstream's own tool example ("Vercel Job Offer", "Email to Sharanjeet") overlaps the dev workload, which is one reason the headline numbers come from the independent workload.
 
-**What the interaction agent sees** (`agent_ranker.py`, `interaction_agent/agent.py`):
+## 3. Testing and evaluation (summary)
 
-```xml
-<agent name="Stripe contract" last_used="2026-11-18" runs="4">Contract review with Priya at Stripe…</agent>
-…
-<more_agents count="280">Older or less relevant agents are not listed. … call search_agents …</more_agents>
-```
+- **62 unit and integration tests** run with no network; any real API call fails the test.
+  Every bug fix has a test that was checked to **fail without the fix**.
+- **Evaluators** in `evals/`:
+  - prompt growth, before and after;
+  - offline routing recall (K sweep, ablations, dedupe) on a dev and an independent workload;
+  - live routing with paired McNemar tests and ablations;
+  - a live memory-compaction QA test.
+- **Live end-to-end runs** against the real server:
+  - a reminder created and then rescheduled, with the agent reused;
+  - a trigger firing on schedule;
+  - two simultaneous messages;
+  - clearing history.
+- **Two rounds of independent review** of the diff found 11 issues, all fixed. One was a
+  change of mine that made things worse, and I reverted it.
 
-- **Pinned, always shown.** Agents with an active trigger (they wake up by themselves, so
-  their results must stay routable) and agents named in the current turn (e.g. the sender of
-  a batch result).
-- **Top-K of the rest.** The score is `0.7 · BM25(name×2 + description) + 0.3 · recency`. The
-  query is the current message plus the last ~1,500 characters of the conversation, so a bare
-  "yes, send it" still finds the agent that just produced the draft. Recency decays with a
-  3-day half-life.
-- **`search_agents(query)` tool.** Reaches everything that isn't listed. The prompt tells the
-  model to search before creating an agent for something that sounds like earlier work.
-- **No explicit archive state.** Agents that fall out of the top-K are effectively archived,
-  and they come back as soon as they become relevant or get used. That gives one less state
-  machine to keep consistent with triggers and logs.
-
-BM25 is about 40 lines of pure Python: deterministic, dependency-free, and easy to test. The
-scorer is a pure function, so swapping in embeddings later is a local change (see
-limitations).
-
-**Choosing K.** I swept K ∈ {5, 10, 15, 20, 30} offline and picked the smallest K with recall
-≥ 0.95, which was **K = 20**. It is configurable via `OPENPOKE_AGENT_ROSTER_LIMIT`.
-
-**Duplicate prevention** (`send_message_to_agent`):
-
-1. Same normalized key ("email-to-alice" for "Email to Alice"): reuse automatically under the
-   canonical name. This also fixes the log-collision bug.
-2. Similar content tokens (generic words like *email/reply/to* ignored, plurals folded, one
-   name's tokens a subset of the other's or Jaccard ≥ 0.6): **reject** and return the
-   candidates with their descriptions. The model then reuses one, or retries with
-   `force_new=true`.
-3. Otherwise: create the agent.
-
-Similar names are rejected-with-candidates instead of auto-merged on purpose. "Alice lunch"
-and "Alice contract" can be genuinely parallel work, and only the model (reading the
-descriptions) can tell. A false flag costs one extra LLM round trip. A wrong merge would
-corrupt an agent's memory.
-
-**Prompt changes.** Parallelize only *independent* work. Name agents after the thread of work
-they own. Explain `<active_agents>`, `<more_agents>`, `search_agents` and
-`similar_agents_exist`.
-
-## 3. How it was measured
-
-```bash
-python3.11 -m venv .venv && .venv/bin/pip install -r server/requirements.txt pytest tiktoken
-.venv/bin/python -m pytest                       # 53 unit/integration tests
-.venv/bin/python -m evals.prompt_growth          # width/depth token curves (after)
-.venv/bin/python -m evals.routing_offline        # routing recall, K sweep, ablations, dedupe
-OPENROUTER_API_KEY=… .venv/bin/python -m evals.routing_llm --n 30 --yes --seed 11 --delay 2   # live LLM routing (~$0.5)
-```
-
-Baseline numbers come from running the *same* `prompt_growth.py` against an untouched
-checkout of `main`:
-
-```bash
-git worktree add ../openpoke-main main
-cd ../openpoke-main && PYTHONPATH=. ../openpoke/.venv/bin/python ../openpoke/evals/prompt_growth.py --label baseline
-```
-
-### Tests (`tests/`, 53 tests, no network)
-
-All stores (roster, logs, memory, triggers) are redirected to `tmp_path`, and the LLM is
-stubbed.
-- `test_roster.py`: key normalization, legacy migration, idempotent add, persistence,
-  similarity edge cases (subset vs. different person vs. generic-only names).
-- `test_agent_ranker.py`: relevance beats recency, recency breaks ties, top-K and hidden
-  count, pinned agents survive, search, batch-result mentions.
-- `test_interaction_routing.py`: rendered roster (top-K, descriptions, `<more_agents>`,
-  trigger pinning, transcript-tail query), respelled-name reuse, similar-name rejection,
-  `force_new`, search reaching hidden agents.
-- `test_agent_memory.py`: run splitting, bounded fallback without an LLM, compaction
-  threshold, incremental folding, identifiers surviving compaction, flat prompt size over 60
-  runs, failure handling (state untouched, retry allowed), and an end-to-end
-  `ExecutionAgentRuntime` run with a stubbed LLM.
-- `test_runtime_concurrency.py`: an end-to-end interaction turn where the scripted LLM invents
-  a near-duplicate name, gets `similar_agents_exist`, and reuses the existing agent;
-  interaction turns serialized and time-limited; same-agent runs serialized with contiguous
-  logs; trigger runs in their own batch; `wait` ending a turn only when it's the whole
-  response.
-- `test_llm_client.py`: `max_tokens` always sent; 429/503 retried; 402 not retried;
-  concurrency capped (via `httpx.MockTransport`).
-
-The two lock tests and the `wait` test were checked *against* the fix: with the fix
-removed, they fail.
-
-**End-to-end smoke test** (real server, real Sonnet 5.5, no Gmail):
-1. "remind me to call mom tomorrow at 6pm" created an agent named after the thread (`Call mom
-   reminder`), gave it a description, and stored the trigger.
-2. "I am in New York. actually make it 7pm" **reused** that agent (`run_count` 2) and moved
-   the trigger to 00:00 UTC.
-
-That run is what surfaced the `wait` and logging bugs in §5. After the fix, the replay logged
-zero errors.
-
-A second live run covered three more paths, all passing with zero errors:
-- a trigger firing on schedule (scheduler → execution agent → result delivered to the user);
-- two messages sent at the same instant (serialized turns, both answered correctly);
-- `DELETE /chat/history` (logs, memory, roster and triggers all cleared).
-
-**Other checks.**
-- The suite passes on Python 3.10 and 3.11, from a fresh clone of the fork.
-- The offline evals reproduce byte-for-byte from a fresh clone.
-- Every number in this document was cross-checked against `evals/results/`.
-
-**Independent review.** A separate reviewer was given only the diff, not this write-up. It
-found five real issues, all now fixed, each with a test that fails without the fix:
-1. A compaction finishing after a history clear could resurrect old memory. The save now
-   checks that the log is still the same one.
-2. Sharing one batch manager between triggers and user dispatches, which I had done to "fix"
-   the per-trigger managers, made user results wait on trigger runs. **Reverted:** a
-   separate batch per trigger is the right design.
-3. The new turn lock had no timeout. A turn timeout was added.
-4. `wait` in the same response as a rejected dispatch dropped the rejection. The turn now
-   ends only when the response is `wait` alone.
-5. An unreadable roster was silently replaced on the next write. It is now backed up.
-
-Minor fixes from the same review:
-- stale `Retry-After` reused after a network error;
-- a pending compaction task could be garbage-collected;
-- trigger runs didn't update the agent's `last_used`.
-
-### Evaluators (`evals/`)
-
-**`prompt_growth.py`** drives the real prompt builders, unmodified, on both checkouts.
-
-| Reuses of one agent | Before | After, no LLM (fallback) | After, compaction (peak) |
-|---|---|---|---|
-| 10 | 10,077 | 10,117 | 10,117 |
-| 50 | 47,237 | 10,130 | 11,372 |
-| 100 | 93,687 | 10,130 | 11,372 |
-| 200 | 186,587 | 10,130 | 11,372 |
-
-**`routing_offline.py`** uses 300 synthetic agents with ground truth and 240 follow-up
-messages across five kinds:
-- *explicit*: names the person and topic;
-- *paraphrase*: names the person, with a topic synonym;
-- *vague*: company plus a topic synonym, no person;
-- *person_only*: "did Priya reply?", where the target is her most recent thread;
-- *followup*: "yes send it", where the agent appears only in the transcript tail.
-
-Each message is rendered through the real `prepare_message_with_history`, and the eval
-checks whether the target agent is listed.
-
-| K | recall | top-3 | tokens | explicit | paraphrase | person_only | followup | vague |
-|---|---|---|---|---|---|---|---|---|
-| 5 | 0.858 | 0.804 | 323 | 1.0 | 0.729 | 1.0 | 1.0 | 0.562 |
-| 10 | 0.912 | 0.804 | 604 | 1.0 | 0.958 | 1.0 | 1.0 | 0.604 |
-| 15 | 0.942 | 0.804 | 882 | 1.0 | 1.0 | 1.0 | 1.0 | 0.708 |
-| **20** | **0.975** | **0.804** | **1,161** | 1.0 | 1.0 | 1.0 | 1.0 | 0.875 |
-| 30 | 1.0 | 0.804 | 1,721 | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 |
-
-Baseline: recall 1.0 at 2,988 tokens, names only.
-
-Ablation at K=20:
-
-| Scorer | recall | top-3 |
-|---|---|---|
-| recency only | 0.217 | 0.042 |
-| BM25 only | 0.963 | 0.671 |
-| hybrid (ours) | 0.975 | 0.804 |
-
-Recency barely helps recall, but it is what ranks Priya's *latest* thread first.
-
-Dedupe, on hand-labeled name pairs:
-- 20 same-thread pairs. The baseline creates 20 duplicates, 2 of which also silently share a
-  log file. After the fix: 0 duplicates (2 auto-reused, 18 flagged).
-- 16 different-thread pairs. 1 false flag ("Email to Alice" vs "Alice contract"), which is
-  ambiguous from names alone and resolved by the model reading the descriptions.
-
-**`routing_llm.py`** is the eval that can show routing actually got *better*. The offline
-eval can't: the baseline lists everything, so its recall is trivially 100%. This script sends
-the same queries to the real interaction-agent model under both the baseline prompt
-(original system prompt from `main`, all names, original tools) and the new one (real tool
-handlers, including rejection and search). It reports:
-- correct reuse,
-- needless new agent,
-- wrong existing agent,
-- no dispatch,
-- prompt tokens per query.
-
-#### Live results (`anthropic/claude-sonnet-5.5`, 300 agents, 30 queries per condition)
-
-Getting the eval to run at all surfaced two production bugs (§5): the retired default model
-and the missing `max_tokens`.
-
-Each prompt version was judged on a workload it had never seen:
-
-| Workload (seed) | Used for |
-|---|---|
-| dev (7) | Iterating v1 → v2 |
-| held-out (11) | Validating v2; its traces motivated v3 |
-| fresh (13) | Final check of v3. Generated after v3 was frozen; no prompt changes since |
-
-"Before" is always the original prompt from `main`, with all names and the original tools.
-p-values are one-sided Fisher exact tests.
-
-**Final prompt (v3) on the fresh set (seed 13)**, `evals/results/routing_llm_sonnet55_seed13_v3.json`:
-
-| | Before | After (v3) |
-|---|---|---|
-| Correct agent | 66.7% (20/30) | **93.3% (28/30)** (p = 0.011) |
-| **Silent misroute** (wrong existing agent + needless new agent) | 33.3% (10/30) | **6.7% (2/30)** (p = 0.011) |
-| … wrong existing agent | 13.3% | 3.3% |
-| … needless new agent | 20.0% | 3.3% |
-| Asked the user to clarify, no dispatch | 0% | 0% |
-| Input tokens per query (all LLM calls) | 9,138 | 8,274 (−9%) |
-
-| explicit | paraphrase | vague | person_only | followup |
-|---|---|---|---|---|
-| 100 → 100% | 67 → 83% | 17 → **83%** | 50 → **100%** | 100 → 100% |
-
-The two remaining misses are both synonym gaps, the limitation predicted offline:
-- "subscription" for an agent about a "renewal": the model searched, found nothing, and
-  created a new agent.
-- One wrong pick on a vague query.
-
-**Silent misroutes are the metric that matters.** A misroute sends the user's request into
-the wrong thread, or forks a thread and loses its context, and nobody notices. A clarifying
-question costs one message. Typical "before" failures:
-- "did Ivan reply?" went to `Email to Ivan`, the wrong one of his threads;
-- "did the Retool bill go through?" created a new `Retool bill status` agent.
-
-The original roster shows only names, so the model can't see that Ivan has eight threads, or
-which agent owns Retool's invoice.
-
-**How the prompt evolved.**
-
-*v1 (dev set, `…_dev_v1.json`).* Accuracy rose from 63% to 74%, and wrong-existing routes
-fell from 23% to 4%. But needless new agents went *up*, from 13% to 19%. The traces showed
-why: the model got `similar_agents_exist` and still used `force_new=true` to create agents
-like "Fatima reply check". It treated "check for replies" as a new task.
-
-*v2.* One rule: status questions belong to the agent that owns the work, because that agent
-has the thread ids.
-- Dev (`…_dev_v2.json`): needless new agents 6.7%, wrong routes 0%, clarifying questions 27%.
-- Held-out (`…_heldout.json`):
-
-  | | Before | After (v2) |
-  |---|---|---|
-  | Correct | 50.0% | 73.3% (p = 0.055) |
-  | Silent misroute | 46.7% | 10.0% (p = 0.002) |
-  | Clarify | 3.3% | 16.7% |
-
-  Every clarifying question was on a person-only query. A re-run probe
-  (`…_person_only_probe.json`) showed the model usually already knew the answer: "You've got
-  a lot of Ivans going… If it's the latest thread, that's Ivan at Vercel about the lunch."
-
-*v3.* When one candidate clearly stands out (most recent, or best description match), act on
-it and say which one you picked. Ask only when none stands out.
-- Person-only queries on seed 13 (`…_seed13_person_only.json`): 6/6 correct, 0 clarifying
-  questions.
-- The full seed-13 run above: no regression on the other kinds, 0% clarifying questions.
-
-**Caveats.**
-- n = 30 per condition and a single run per condition, so expect a few points of LLM
-  variance. Both headline differences on seed 13 are significant at p ≈ 0.01.
-- The synthetic workload is dense: each person has ~10 concurrent threads, which makes
-  person-only questions genuinely ambiguous. The "most recent thread" label is one reasonable
-  answer, not the only one.
-- The eval stops at the first accepted dispatch. It only sees v3 announcing its pick
-  ("Checking your latest thread with Jonas at Retool") when that arrives in the same
-  response.
-- Token savings per query are modest at 300 agents, because the system prompt and tool
-  schemas dominate. They grow with roster size (see `prompt_growth`).
-
-### Honest caveats
-
-- The offline workload is synthetic, and its queries share vocabulary with the descriptions.
-  That favors lexical retrieval. The *vague* bucket (87.5%) is the realistic weak spot.
-- Simulating `search_agents` with the raw user message is pessimistic. A real model would
-  write a better query ("Stripe contract").
-- Depth assumes 3 tool calls per run, each hitting the 500-char result truncation. The slope
-  depends on that assumption. The fact that growth was unbounded and is now bounded does not.
+Full details: [EVALUATION.md](EVALUATION.md).
 
 ## 4. Limitations and next steps
 
-1. **Synonyms.** BM25 misses "agreement" ≈ "contract". The next step is an embedding scorer
-   behind the same `score_agents` interface, with BM25 kept as a fallback.
-2. **Descriptions before the first compaction** are heuristic: "Started for: <first
-   instruction> | Latest: <last result>". The LLM-written description appears from the first
-   compaction on.
-3. **Agent identity is still the name string.** Normalizing it to a slug key everywhere
-   (roster, logs, memory, triggers) closes the collision bugs. A stable generated id plus a
-   display name would let agents be renamed or merged later.
-4. **Clarify vs. act.** Prompt v3 acts on a clear front-runner and names it, instead of
-   asking "which Ivan?". It made no clarifying calls on the synthetic workloads. The right
-   threshold between acting and asking is a product decision to A/B test with real users.
-
-## 5. Other problems found in OpenPoke
-
-Fixed in this branch, each with tests:
-
-| Problem | Where | Fix |
-|---|---|---|
-| **The app could not run at all.** Every model was hard-coded to `anthropic/claude-sonnet-4`, which OpenRouter has retired, so every request returned 404 | `config.py` | Models are configurable per role (`OPENPOKE_*_MODEL`). Defaults: Sonnet 5.5 for the agents, Haiku 5.5 for the summarizers and email classifier (about 20× cheaper for background work) |
-| **No `max_tokens`.** OpenRouter reserved the full 64k output budget on every call, so output cost was uncapped and requests failed with 402 on low-balance accounts | `openrouter_client/client.py` | `max_tokens` is always sent (`OPENPOKE_MAX_OUTPUT_TOKENS`, default 4096) |
-| **Unbounded parallel LLM calls, no retry.** Fan-out × tool loops × background summarizers could all fire at once, and a single 429 failed the whole task | `openrouter_client/client.py` | Per-loop semaphore (`OPENPOKE_LLM_MAX_CONCURRENCY`, default 8); retry 408/429/5xx/network errors with exponential backoff; 4xx errors are not retried |
-| **Interaction-agent turns race.** Four entry points (user message, batch result, trigger result, email watcher) each read the transcript, call the LLM and append, concurrently. Two turns could answer from the same stale transcript | `interaction_agent/runtime.py` | Turns are serialized (FIFO `asyncio.Lock`), each capped by a turn timeout (`OPENPOKE_TURN_TIMEOUT`, 180 s) so one stuck turn can't block the rest |
-| **Same agent run concurrently interleaves its log**, corrupting its history | `execution_agent/batch_manager.py` | Per-agent run lock; the request is logged inside it, so each run's entries are contiguous |
-| **Trigger-fired runs never logged their request**, so the agent's history showed actions with no instruction | `trigger_scheduler.py`, `batch_manager.py` | Same change: every run logs its request in the batch manager |
-| **Memory cross-talk from slug collisions.** Names differing only in case or punctuation were separate agents sharing one log file | `roster.py`, `log_store.py` | The registry key is the slug |
-| **Triggers keyed by raw spelling.** A trigger saved under "email-to-alice" was invisible to `listTriggers`/`updateTrigger` for "Email to Alice" | `triggers/store.py` | Queries compare `agent_key(agent_name)` via a SQLite UDF; one identity everywhere (roster, logs, memory, triggers) |
-| **Non-atomic, lossy roster writes.** The file was truncated (`open('w')`) *before* locking, and writers saved stale in-memory copies over each other | `roster.py` | Read-modify-write under a lock file; temp file + `os.replace`. An unreadable file is moved to `roster.json.corrupt-<ts>` instead of being overwritten |
-| **Leftover template text in the execution prompt** (`[TO BE FILLED IN BY USER …]`) sent on every call | `execution_agent/system_prompt.md` | Replaced with guidance on reading the memory summary |
-| **The prompt references a tool that doesn't exist** (`reacttomessage`) | `interaction_agent/system_prompt.md` | Removed |
-| **`wait` never ended the turn.** Found in a live end-to-end run: the model called `wait` repeatedly until the 8-iteration limit raised, so turns "failed" after burning extra LLM calls | `interaction_agent/runtime.py` | A response consisting only of `wait` ends the turn. If other calls come alongside it (for example a rejected dispatch), the model still sees their results |
-| **Error logs never said why.** Failures are logged as `logger.error(msg, extra={"error": …})`, but the formatter dropped `extra` fields | `logging_config.py` | Formatter appends `extra` fields |
-
-Found but not fixed here, with the proposed fix:
-
-| Problem | Where | Proposed fix |
-|---|---|---|
-| One global batch: a slow agent holds back every other agent's result (up to the 90 s timeout), and new dispatches join an old batch | `execution_agent/batch_manager.py` | Batch per interaction turn (pass the batch id from the dispatching turn); deliver each result as it lands, with a short debounce so near-simultaneous results still arrive together |
-| **An OpenRouter API key is in the public git history.** `b5695fa` (2025-09-17) committed a server access log whose request URLs carry `api_key=sk-or-v1-…` in the query string. `f715ae0` deleted the file, but every clone and fork still contains it | upstream history; the old HTTP server | Treat the key as compromised and revoke it. Purge it with `git filter-repo` if desired. Never accept credentials in query strings, since they end up in access logs. The current server reads the key from `.env` only, and upstream has since gitignored `*.log` (`6fa16ac`) |
-| **A timezone given in chat is ignored, so relative reminders can be hours off.** The user's timezone comes only from the browser. When an API client doesn't send one (or it's wrong) and the user says "I'm in New York" in chat, the model mixes the UTC clock with the stated local zone. In a live run, "remind me in 1 minute" was scheduled 5 hours late | `services/timezone_store.py`, execution prompt | Give the interaction agent a `set_timezone` tool that persists to the timezone store. Stamp the current time *with its zone* into execution instructions |
-| Tool results truncated to 500 chars in agent memory, which can cut off the very ids memory needs | `execution_agent/agent.py::record_tool_execution` | Extract ids (message, thread, draft) structurally before truncating |
+1. **Synonyms.** BM25 misses "pricing" ≈ "quote" and "walkthrough" ≈ "inspection". These
+   are 3 of the 5 remaining live failures. Next: an embedding scorer behind `score_agents`,
+   with BM25 kept as a fallback.
+2. **Agents without descriptions** (legacy, or before the first-run description lands) are
+   findable by name only. That explains most of the 9% offline recall gap.
+3. **Act vs. ask.** The prompt now acts on a clear front-runner and names it. The right
+   threshold is a product question for an A/B test with real users.
+4. **Lifecycle.** Logs are never trimmed (the prompt is bounded; disk is not), and
+   identity is still the name slug. A generated id would allow renames and merges.
+5. **Single process.** Turn serialization and per-agent locks live in memory. Multiple
+   workers would need shared locks.

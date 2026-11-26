@@ -1,0 +1,2080 @@
+{
+  "model": "anthropic/claude-sonnet-5.5",
+  "agents": 300,
+  "seed": 7,
+  "vocab": "fresh",
+  "baseline": {
+    "summary": {
+      "n": 40,
+      "api_errors": 0,
+      "accuracy": 0.5,
+      "new_duplicate_rate": 0.1,
+      "wrong_existing_rate": 0.4,
+      "no_dispatch_rate": 0.0,
+      "avg_prompt_tokens_per_query": 9749,
+      "avg_llm_calls": 1.0,
+      "accuracy_by_kind": {
+        "explicit": 0.625,
+        "paraphrase": 0.25,
+        "vague": 0.625,
+        "person_only": 0.0,
+        "followup": 1.0
+      }
+    },
+    "rows": [
+      {
+        "kind": "explicit",
+        "message": "chase Anouk on the invitation please",
+        "target": "invitation-anouk",
+        "chosen": "invitation - Anouk",
+        "prompt_tokens": 9738,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "On it. I'll put together a nudge to Anouk about the invitation for you to look over."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "explicit",
+        "message": "what's the latest from Gustavo regarding the quote",
+        "target": "orbit-gym-quote",
+        "chosen": "Gustavo (Orbit Gym)",
+        "prompt_tokens": 9743,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": false,
+        "outcome": "wrong_existing"
+      },
+      {
+        "kind": "explicit",
+        "message": "remind Wesley about the shipment",
+        "target": "hollis-legal-shipment",
+        "chosen": "Follow-ups with Wesley",
+        "prompt_tokens": 9737,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": false,
+        "outcome": "wrong_existing"
+      },
+      {
+        "kind": "explicit",
+        "message": "remind Katya about the refund",
+        "target": "maple-insurance-refund",
+        "chosen": "Katya (Maple Insurance)",
+        "prompt_tokens": 9735,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": false,
+        "outcome": "wrong_existing"
+      },
+      {
+        "kind": "explicit",
+        "message": "remind Emeka about the quote",
+        "target": "quote-emeka",
+        "chosen": "quote - Emeka",
+        "prompt_tokens": 9736,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "explicit",
+        "message": "chase Ulrich on the refund please",
+        "target": "refund-for-ulrich",
+        "chosen": "refund for Ulrich",
+        "prompt_tokens": 9738,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "explicit",
+        "message": "chase Nikhil on the inspection please",
+        "target": "inspection-nikhil",
+        "chosen": "inspection - Nikhil",
+        "prompt_tokens": 9739,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "On it. I'll draft a nudge to Nikhil and show you before it goes out."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "explicit",
+        "message": "remind Ingrid about the deposit",
+        "target": "ingrid-cedarwood-properties",
+        "chosen": "Ingrid (Cedarwood Properties)",
+        "prompt_tokens": 9738,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "On it. Drafting a deposit reminder to Ingrid now."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "remind Dmitri about the pricing",
+        "target": "dmitri-maple-insurance",
+        "chosen": "Follow-ups with Dmitri",
+        "prompt_tokens": 9738,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": false,
+        "outcome": "wrong_existing"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "chase Dmitri on the visit please",
+        "target": "thread-with-dmitri-on-appointment",
+        "chosen": "Follow-ups with Dmitri",
+        "prompt_tokens": 9738,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": false,
+        "outcome": "wrong_existing"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "what's the latest from Aurelio regarding the security deposit",
+        "target": "cedarwood-properties-deposit",
+        "chosen": "lease for Aurelio",
+        "prompt_tokens": 9745,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": false,
+        "outcome": "wrong_existing"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "remind Benedikt about the insurance claim",
+        "target": "hollis-legal-claim",
+        "chosen": "Follow-ups with Benedikt",
+        "prompt_tokens": 9740,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": false,
+        "outcome": "wrong_existing"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "what's the latest from Oksana regarding the case",
+        "target": "claim-for-oksana",
+        "chosen": "claim for Oksana",
+        "prompt_tokens": 9741,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "what's the latest from Wesley regarding the security deposit",
+        "target": "hollis-legal-deposit",
+        "chosen": "Wesley security deposit lookup",
+        "prompt_tokens": 9744,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "checking Wesley's latest on the deposit."
+        ],
+        "correct": false,
+        "outcome": "new_duplicate"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "chase Soren on the walkthrough please",
+        "target": "inspection-soren",
+        "chosen": "inspection - Soren",
+        "prompt_tokens": 9739,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "remind Hiroshi about the plan",
+        "target": "membership-hiroshi",
+        "chosen": "Follow-ups with Hiroshi",
+        "prompt_tokens": 9738,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": false,
+        "outcome": "wrong_existing"
+      },
+      {
+        "kind": "vague",
+        "message": "is the Juniper Bank delivery sorted yet?",
+        "target": "shipment-delphine",
+        "chosen": "Juniper Bank delivery",
+        "prompt_tokens": 9744,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": false,
+        "outcome": "new_duplicate"
+      },
+      {
+        "kind": "vague",
+        "message": "anything new from Brightline Dental about the insurance claim?",
+        "target": "soren-brightline-dental",
+        "chosen": "Brightline Dental: insurance claim",
+        "prompt_tokens": 9745,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "checking your inbox for Brightline Dental now."
+        ],
+        "correct": false,
+        "outcome": "new_duplicate"
+      },
+      {
+        "kind": "vague",
+        "message": "is the Juniper Bank walkthrough sorted yet?",
+        "target": "juniper-bank-inspection",
+        "chosen": "Juniper Bank: inspection",
+        "prompt_tokens": 9746,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "vague",
+        "message": "where did we land with Brightline Dental on the down payment",
+        "target": "follow-ups-with-soren",
+        "chosen": "Soren (Brightline Dental)",
+        "prompt_tokens": 9743,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": false,
+        "outcome": "wrong_existing"
+      },
+      {
+        "kind": "vague",
+        "message": "is the Brightline Dental money back sorted yet?",
+        "target": "refund-soren",
+        "chosen": "refund - Soren",
+        "prompt_tokens": 9743,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "vague",
+        "message": "where did we land with Atlas Movers on the package",
+        "target": "atlas-movers-shipment",
+        "chosen": "Atlas Movers shipment",
+        "prompt_tokens": 9741,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "checking on Atlas Movers and the package now."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "vague",
+        "message": "where did we land with Brightline Dental on the insurance claim",
+        "target": "soren-brightline-dental",
+        "chosen": "Soren (Brightline Dental)",
+        "prompt_tokens": 9745,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "vague",
+        "message": "is the Juniper Bank subscription sorted yet?",
+        "target": "juniper-bank-membership",
+        "chosen": "Juniper Bank: membership",
+        "prompt_tokens": 9744,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "checking on that now."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "person_only",
+        "message": "nudge Delphine",
+        "target": "juniper-bank-inspection",
+        "chosen": "appointment for Delphine",
+        "prompt_tokens": 9733,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": false,
+        "outcome": "wrong_existing"
+      },
+      {
+        "kind": "person_only",
+        "message": "heard back from Ulrich?",
+        "target": "thread-with-ulrich-on-statement",
+        "chosen": "Follow-ups with Ulrich",
+        "prompt_tokens": 9736,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": false,
+        "outcome": "wrong_existing"
+      },
+      {
+        "kind": "person_only",
+        "message": "heard back from Katya?",
+        "target": "shipment-katya",
+        "chosen": "Follow-ups with Katya",
+        "prompt_tokens": 9734,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": false,
+        "outcome": "wrong_existing"
+      },
+      {
+        "kind": "person_only",
+        "message": "any word from Thandiwe?",
+        "target": "refund-thandiwe",
+        "chosen": "Follow-ups with Thandiwe",
+        "prompt_tokens": 9736,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": false,
+        "outcome": "wrong_existing"
+      },
+      {
+        "kind": "person_only",
+        "message": "nudge Pablo",
+        "target": "shipment-pablo",
+        "chosen": "Follow-ups with Pablo",
+        "prompt_tokens": 9733,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": false,
+        "outcome": "new_duplicate"
+      },
+      {
+        "kind": "person_only",
+        "message": "heard back from Gustavo?",
+        "target": "manuscript-gustavo",
+        "chosen": "Thread with Gustavo on claim",
+        "prompt_tokens": 9736,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": false,
+        "outcome": "wrong_existing"
+      },
+      {
+        "kind": "person_only",
+        "message": "heard back from Jamal?",
+        "target": "maple-insurance-deposit",
+        "chosen": "Follow-ups with Jamal",
+        "prompt_tokens": 9735,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "checking now."
+        ],
+        "correct": false,
+        "outcome": "wrong_existing"
+      },
+      {
+        "kind": "person_only",
+        "message": "nudge Calla",
+        "target": "calla-atlas-movers",
+        "chosen": "Follow-ups with Calla",
+        "prompt_tokens": 9732,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": false,
+        "outcome": "wrong_existing"
+      },
+      {
+        "kind": "followup",
+        "message": "make it friendlier and send",
+        "target": "harbor-vet-quote",
+        "chosen": "Harbor Vet: quote",
+        "prompt_tokens": 9787,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "followup",
+        "message": "make it friendlier and send",
+        "target": "lease-esperanza",
+        "chosen": "lease - Esperanza",
+        "prompt_tokens": 9789,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Warming it up now. I'll show you the new version before it goes out."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "followup",
+        "message": "perfect, go ahead and send",
+        "target": "deposit-thandiwe",
+        "chosen": "deposit - Thandiwe",
+        "prompt_tokens": 9801,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Sending it now."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "followup",
+        "message": "send it",
+        "target": "claim-for-marisol",
+        "chosen": "claim for Marisol",
+        "prompt_tokens": 9779,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Sending it now."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "followup",
+        "message": "make it friendlier and send",
+        "target": "claim-nikhil",
+        "chosen": "claim - Nikhil",
+        "prompt_tokens": 9789,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "followup",
+        "message": "make it friendlier and send",
+        "target": "hollis-legal-manuscript",
+        "chosen": "Hollis Legal manuscript",
+        "prompt_tokens": 9791,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "followup",
+        "message": "make it friendlier and send",
+        "target": "nikhil-hollis-legal",
+        "chosen": "Nikhil (Hollis Legal)",
+        "prompt_tokens": 9794,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "followup",
+        "message": "perfect, go ahead and send",
+        "target": "orbit-gym-claim",
+        "chosen": "Orbit Gym claim",
+        "prompt_tokens": 9789,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Sending it to Emeka now."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      }
+    ]
+  },
+  "after": {
+    "summary": {
+      "n": 40,
+      "api_errors": 0,
+      "accuracy": 0.875,
+      "new_duplicate_rate": 0.075,
+      "wrong_existing_rate": 0.05,
+      "no_dispatch_rate": 0.0,
+      "avg_prompt_tokens_per_query": 8149,
+      "avg_llm_calls": 1.2,
+      "accuracy_by_kind": {
+        "explicit": 1.0,
+        "paraphrase": 0.625,
+        "vague": 0.875,
+        "person_only": 0.875,
+        "followup": 1.0
+      }
+    },
+    "rows": [
+      {
+        "kind": "explicit",
+        "message": "chase Anouk on the invitation please",
+        "target": "invitation-anouk",
+        "chosen": "invitation - Anouk",
+        "prompt_tokens": 6448,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "On it. I'll draft a nudge to Anouk on the invitation for you to review."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "explicit",
+        "message": "what's the latest from Gustavo regarding the quote",
+        "target": "orbit-gym-quote",
+        "chosen": "Orbit Gym quote",
+        "prompt_tokens": 6561,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Checking the Orbit Gym quote thread with Gustavo."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "explicit",
+        "message": "remind Wesley about the shipment",
+        "target": "hollis-legal-shipment",
+        "chosen": "Hollis Legal: shipment",
+        "prompt_tokens": 6363,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "explicit",
+        "message": "remind Katya about the refund",
+        "target": "maple-insurance-refund",
+        "chosen": "Maple Insurance refund",
+        "prompt_tokens": 6513,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "On it. I'm using the Maple Insurance refund thread with Katya and will draft a nudge for you to look over."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "explicit",
+        "message": "remind Emeka about the quote",
+        "target": "quote-emeka",
+        "chosen": "quote - Emeka",
+        "prompt_tokens": 6377,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "explicit",
+        "message": "chase Ulrich on the refund please",
+        "target": "refund-for-ulrich",
+        "chosen": "refund for Ulrich",
+        "prompt_tokens": 6651,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "On it, drafting a nudge to Ulrich about the refund."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "explicit",
+        "message": "chase Nikhil on the inspection please",
+        "target": "inspection-nikhil",
+        "chosen": "inspection - Nikhil",
+        "prompt_tokens": 6609,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "explicit",
+        "message": "remind Ingrid about the deposit",
+        "target": "ingrid-cedarwood-properties",
+        "chosen": "Ingrid (Cedarwood Properties)",
+        "prompt_tokens": 6883,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "remind Dmitri about the pricing",
+        "target": "dmitri-maple-insurance",
+        "chosen": "pricing - Dmitri",
+        "prompt_tokens": 14359,
+        "calls": 2,
+        "rejections": 0,
+        "searches": 1,
+        "said_to_user": [
+          "On it. I'll draft a pricing nudge to Dmitri and show it to you before it goes out."
+        ],
+        "correct": false,
+        "outcome": "new_duplicate"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "chase Dmitri on the visit please",
+        "target": "thread-with-dmitri-on-appointment",
+        "chosen": "Thread with Dmitri on appointment",
+        "prompt_tokens": 14315,
+        "calls": 2,
+        "rejections": 0,
+        "searches": 1,
+        "said_to_user": [
+          "On it. Using the appointment thread with Dmitri and drafting a nudge about the visit."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "what's the latest from Aurelio regarding the security deposit",
+        "target": "cedarwood-properties-deposit",
+        "chosen": "Cedarwood Properties deposit",
+        "prompt_tokens": 6856,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Checking your deposit thread with Aurelio now."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "remind Benedikt about the insurance claim",
+        "target": "hollis-legal-claim",
+        "chosen": "Hollis Legal claim",
+        "prompt_tokens": 6676,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "On it. I'm drafting a reminder to Benedikt about the claim, and you'll see it before it goes out."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "what's the latest from Oksana regarding the case",
+        "target": "claim-for-oksana",
+        "chosen": "claim for Oksana",
+        "prompt_tokens": 14513,
+        "calls": 2,
+        "rejections": 0,
+        "searches": 1,
+        "said_to_user": [
+          "Checking the claim thread with Oksana at Atlas Movers."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "what's the latest from Wesley regarding the security deposit",
+        "target": "hollis-legal-deposit",
+        "chosen": "Hollis Legal: deposit",
+        "prompt_tokens": 6618,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Checking the deposit thread with Wesley."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "chase Soren on the walkthrough please",
+        "target": "inspection-soren",
+        "chosen": "Brightline Dental: walkthrough",
+        "prompt_tokens": 13901,
+        "calls": 2,
+        "rejections": 0,
+        "searches": 1,
+        "said_to_user": [
+          "On it. Drafting a nudge to Soren about the walkthrough."
+        ],
+        "correct": false,
+        "outcome": "new_duplicate"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "remind Hiroshi about the plan",
+        "target": "membership-hiroshi",
+        "chosen": "plan - Hiroshi",
+        "prompt_tokens": 14222,
+        "calls": 2,
+        "rejections": 0,
+        "searches": 1,
+        "correct": false,
+        "outcome": "new_duplicate"
+      },
+      {
+        "kind": "vague",
+        "message": "is the Juniper Bank delivery sorted yet?",
+        "target": "shipment-delphine",
+        "chosen": "shipment - Delphine",
+        "prompt_tokens": 6528,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Checking the Juniper Bank shipment thread with Delphine."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "vague",
+        "message": "anything new from Brightline Dental about the insurance claim?",
+        "target": "soren-brightline-dental",
+        "chosen": "Soren (Brightline Dental)",
+        "prompt_tokens": 14159,
+        "calls": 2,
+        "rejections": 0,
+        "searches": 1,
+        "said_to_user": [
+          "Checking your inbox for anything from Brightline Dental on the claim."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "vague",
+        "message": "is the Juniper Bank walkthrough sorted yet?",
+        "target": "juniper-bank-inspection",
+        "chosen": "Juniper Bank: inspection",
+        "prompt_tokens": 6530,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Checking the Juniper Bank inspection thread now."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "vague",
+        "message": "where did we land with Brightline Dental on the down payment",
+        "target": "follow-ups-with-soren",
+        "chosen": "Soren (Brightline Dental)",
+        "prompt_tokens": 13868,
+        "calls": 2,
+        "rejections": 0,
+        "searches": 1,
+        "said_to_user": [
+          "Digging through the Brightline Dental emails for the down payment."
+        ],
+        "correct": false,
+        "outcome": "wrong_existing"
+      },
+      {
+        "kind": "vague",
+        "message": "is the Brightline Dental money back sorted yet?",
+        "target": "refund-soren",
+        "chosen": "refund - Soren",
+        "prompt_tokens": 6553,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Checking the Brightline refund thread with Soren now."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "vague",
+        "message": "where did we land with Atlas Movers on the package",
+        "target": "atlas-movers-shipment",
+        "chosen": "Atlas Movers shipment",
+        "prompt_tokens": 6726,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "vague",
+        "message": "where did we land with Brightline Dental on the insurance claim",
+        "target": "soren-brightline-dental",
+        "chosen": "Soren (Brightline Dental)",
+        "prompt_tokens": 14159,
+        "calls": 2,
+        "rejections": 0,
+        "searches": 1,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "vague",
+        "message": "is the Juniper Bank subscription sorted yet?",
+        "target": "juniper-bank-membership",
+        "chosen": "Juniper Bank: membership",
+        "prompt_tokens": 6528,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Checking the Juniper Bank membership thread now."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "person_only",
+        "message": "nudge Delphine",
+        "target": "juniper-bank-inspection",
+        "chosen": "shipment - Delphine",
+        "prompt_tokens": 6566,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": false,
+        "outcome": "wrong_existing"
+      },
+      {
+        "kind": "person_only",
+        "message": "heard back from Ulrich?",
+        "target": "thread-with-ulrich-on-statement",
+        "chosen": "Thread with Ulrich on statement",
+        "prompt_tokens": 6576,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "person_only",
+        "message": "heard back from Katya?",
+        "target": "shipment-katya",
+        "chosen": "shipment - Katya",
+        "prompt_tokens": 6528,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "checking your inbox for anything new from Katya."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "person_only",
+        "message": "any word from Thandiwe?",
+        "target": "refund-thandiwe",
+        "chosen": "refund - Thandiwe",
+        "prompt_tokens": 6691,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Checking the latest Thandiwe thread (the refund one)."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "person_only",
+        "message": "nudge Pablo",
+        "target": "shipment-pablo",
+        "chosen": "shipment - Pablo",
+        "prompt_tokens": 6615,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "person_only",
+        "message": "heard back from Gustavo?",
+        "target": "manuscript-gustavo",
+        "chosen": "manuscript - Gustavo",
+        "prompt_tokens": 6634,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Checking the latest Gustavo thread (the manuscript one)."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "person_only",
+        "message": "heard back from Jamal?",
+        "target": "maple-insurance-deposit",
+        "chosen": "Maple Insurance: deposit",
+        "prompt_tokens": 6550,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Checking your inbox for Jamal's latest, starting with the deposit thread."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "person_only",
+        "message": "nudge Calla",
+        "target": "calla-atlas-movers",
+        "chosen": "Calla (Atlas Movers)",
+        "prompt_tokens": 6618,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "followup",
+        "message": "make it friendlier and send",
+        "target": "harbor-vet-quote",
+        "chosen": "Harbor Vet: quote",
+        "prompt_tokens": 6747,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "followup",
+        "message": "make it friendlier and send",
+        "target": "lease-esperanza",
+        "chosen": "lease - Esperanza",
+        "prompt_tokens": 6685,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "followup",
+        "message": "perfect, go ahead and send",
+        "target": "deposit-thandiwe",
+        "chosen": "deposit - Thandiwe",
+        "prompt_tokens": 6832,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Sending it now."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "followup",
+        "message": "send it",
+        "target": "claim-for-marisol",
+        "chosen": "claim for Marisol",
+        "prompt_tokens": 6716,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Sending it to Marisol now."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "followup",
+        "message": "make it friendlier and send",
+        "target": "claim-nikhil",
+        "chosen": "claim - Nikhil",
+        "prompt_tokens": 6730,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "followup",
+        "message": "make it friendlier and send",
+        "target": "hollis-legal-manuscript",
+        "chosen": "Hollis Legal manuscript",
+        "prompt_tokens": 6892,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "followup",
+        "message": "make it friendlier and send",
+        "target": "nikhil-hollis-legal",
+        "chosen": "Nikhil (Hollis Legal)",
+        "prompt_tokens": 6856,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "followup",
+        "message": "perfect, go ahead and send",
+        "target": "orbit-gym-claim",
+        "chosen": "Orbit Gym claim",
+        "prompt_tokens": 6812,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Sending it now."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      }
+    ]
+  },
+  "after_heuristic_desc": {
+    "summary": {
+      "n": 17,
+      "api_errors": 23,
+      "accuracy": 0.765,
+      "new_duplicate_rate": 0.176,
+      "wrong_existing_rate": 0.059,
+      "no_dispatch_rate": 0.0,
+      "avg_prompt_tokens_per_query": 8929,
+      "avg_llm_calls": 1.29,
+      "accuracy_by_kind": {
+        "explicit": 1.0,
+        "paraphrase": 0.625,
+        "vague": 0.0
+      }
+    },
+    "rows": [
+      {
+        "kind": "explicit",
+        "message": "chase Anouk on the invitation please",
+        "target": "invitation-anouk",
+        "chosen": "invitation - Anouk",
+        "prompt_tokens": 6686,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "On it, drafting a nudge to Anouk about the invitation."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "explicit",
+        "message": "what's the latest from Gustavo regarding the quote",
+        "target": "orbit-gym-quote",
+        "chosen": "Orbit Gym quote",
+        "prompt_tokens": 6684,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Checking the Orbit Gym quote thread with Gustavo."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "explicit",
+        "message": "remind Wesley about the shipment",
+        "target": "hollis-legal-shipment",
+        "chosen": "Hollis Legal: shipment",
+        "prompt_tokens": 6677,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "explicit",
+        "message": "remind Katya about the refund",
+        "target": "maple-insurance-refund",
+        "chosen": "Maple Insurance refund",
+        "prompt_tokens": 6628,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "explicit",
+        "message": "remind Emeka about the quote",
+        "target": "quote-emeka",
+        "chosen": "quote - Emeka",
+        "prompt_tokens": 6654,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "explicit",
+        "message": "chase Ulrich on the refund please",
+        "target": "refund-for-ulrich",
+        "chosen": "refund for Ulrich",
+        "prompt_tokens": 6699,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "On it, drafting a nudge to Ulrich. You'll see it before it goes out."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "explicit",
+        "message": "chase Nikhil on the inspection please",
+        "target": "inspection-nikhil",
+        "chosen": "inspection - Nikhil",
+        "prompt_tokens": 6705,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "On it. I'll draft a follow-up to Nikhil on the inspection thread."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "explicit",
+        "message": "remind Ingrid about the deposit",
+        "target": "ingrid-cedarwood-properties",
+        "chosen": "Ingrid (Cedarwood Properties)",
+        "prompt_tokens": 6726,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "On it. Drafting a deposit nudge to Ingrid."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "remind Dmitri about the pricing",
+        "target": "dmitri-maple-insurance",
+        "chosen": "Dmitri pricing reminder",
+        "prompt_tokens": 14460,
+        "calls": 2,
+        "rejections": 0,
+        "searches": 1,
+        "said_to_user": [
+          "On it. Drafting a pricing reminder to Dmitri now."
+        ],
+        "correct": false,
+        "outcome": "new_duplicate"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "chase Dmitri on the visit please",
+        "target": "thread-with-dmitri-on-appointment",
+        "chosen": "Thread with Dmitri on appointment",
+        "prompt_tokens": 6723,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "what's the latest from Aurelio regarding the security deposit",
+        "target": "cedarwood-properties-deposit",
+        "chosen": "Cedarwood Properties deposit",
+        "prompt_tokens": 6716,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Checking the Aurelio deposit thread now."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "remind Benedikt about the insurance claim",
+        "target": "hollis-legal-claim",
+        "chosen": "Hollis Legal claim",
+        "prompt_tokens": 6727,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "what's the latest from Oksana regarding the case",
+        "target": "claim-for-oksana",
+        "chosen": "membership - Oksana",
+        "prompt_tokens": 14328,
+        "calls": 2,
+        "rejections": 0,
+        "searches": 1,
+        "correct": false,
+        "outcome": "wrong_existing"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "what's the latest from Wesley regarding the security deposit",
+        "target": "hollis-legal-deposit",
+        "chosen": "Hollis Legal: deposit",
+        "prompt_tokens": 6698,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Checking the Wesley deposit thread."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "chase Soren on the walkthrough please",
+        "target": "inspection-soren",
+        "chosen": "inspection - Soren",
+        "prompt_tokens": 14309,
+        "calls": 2,
+        "rejections": 0,
+        "searches": 1,
+        "said_to_user": [
+          "On it. I'm using the Soren inspection thread, since it's the closest match to a walkthrough. I'll draft a nudge for you to look over first."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "remind Hiroshi about the plan",
+        "target": "membership-hiroshi",
+        "chosen": "plan - Hiroshi",
+        "prompt_tokens": 14516,
+        "calls": 2,
+        "rejections": 0,
+        "searches": 1,
+        "said_to_user": [
+          "On it. I'll draft a nudge to Hiroshi about the plan for you to review."
+        ],
+        "correct": false,
+        "outcome": "new_duplicate"
+      },
+      {
+        "kind": "vague",
+        "message": "is the Juniper Bank delivery sorted yet?",
+        "target": "shipment-delphine",
+        "chosen": "Juniper Bank delivery status",
+        "prompt_tokens": 13859,
+        "calls": 2,
+        "rejections": 0,
+        "searches": 1,
+        "said_to_user": [
+          "Checking your inbox for the Juniper Bank delivery now."
+        ],
+        "correct": false,
+        "outcome": "new_duplicate"
+      },
+      {
+        "kind": "vague",
+        "message": "anything new from Brightline Dental about the insurance claim?",
+        "target": "soren-brightline-dental",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.02 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "vague",
+        "message": "is the Juniper Bank walkthrough sorted yet?",
+        "target": "juniper-bank-inspection",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.02 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "vague",
+        "message": "where did we land with Brightline Dental on the down payment",
+        "target": "follow-ups-with-soren",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.02 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "vague",
+        "message": "is the Brightline Dental money back sorted yet?",
+        "target": "refund-soren",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.02 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "vague",
+        "message": "where did we land with Atlas Movers on the package",
+        "target": "atlas-movers-shipment",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.02 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "vague",
+        "message": "where did we land with Brightline Dental on the insurance claim",
+        "target": "soren-brightline-dental",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.02 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "vague",
+        "message": "is the Juniper Bank subscription sorted yet?",
+        "target": "juniper-bank-membership",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.02 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "person_only",
+        "message": "nudge Delphine",
+        "target": "juniper-bank-inspection",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.02 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "person_only",
+        "message": "heard back from Ulrich?",
+        "target": "thread-with-ulrich-on-statement",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.02 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "person_only",
+        "message": "heard back from Katya?",
+        "target": "shipment-katya",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.02 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "person_only",
+        "message": "any word from Thandiwe?",
+        "target": "refund-thandiwe",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.04 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "person_only",
+        "message": "nudge Pablo",
+        "target": "shipment-pablo",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.04 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "person_only",
+        "message": "heard back from Gustavo?",
+        "target": "manuscript-gustavo",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.04 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "person_only",
+        "message": "heard back from Jamal?",
+        "target": "maple-insurance-deposit",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.04 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "person_only",
+        "message": "nudge Calla",
+        "target": "calla-atlas-movers",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.04 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "followup",
+        "message": "make it friendlier and send",
+        "target": "harbor-vet-quote",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.04 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "followup",
+        "message": "make it friendlier and send",
+        "target": "lease-esperanza",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.04 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "followup",
+        "message": "perfect, go ahead and send",
+        "target": "deposit-thandiwe",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.04 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "followup",
+        "message": "send it",
+        "target": "claim-for-marisol",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.06 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "followup",
+        "message": "make it friendlier and send",
+        "target": "claim-nikhil",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.06 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "followup",
+        "message": "make it friendlier and send",
+        "target": "hollis-legal-manuscript",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.06 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "followup",
+        "message": "make it friendlier and send",
+        "target": "nikhil-hollis-legal",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.06 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "followup",
+        "message": "perfect, go ahead and send",
+        "target": "orbit-gym-claim",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.06 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      }
+    ]
+  },
+  "full_roster": {
+    "summary": {
+      "n": 1,
+      "api_errors": 40,
+      "accuracy": 0.0,
+      "new_duplicate_rate": 0.0,
+      "wrong_existing_rate": 0.0,
+      "no_dispatch_rate": 0.0,
+      "avg_prompt_tokens_per_query": 0,
+      "avg_llm_calls": 0.0,
+      "accuracy_by_kind": {}
+    },
+    "rows": [
+      {
+        "kind": "explicit",
+        "message": "chase Anouk on the invitation please",
+        "target": "invitation-anouk",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.06 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "explicit",
+        "message": "what's the latest from Gustavo regarding the quote",
+        "target": "orbit-gym-quote",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.06 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "explicit",
+        "message": "remind Wesley about the shipment",
+        "target": "hollis-legal-shipment",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.04 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "explicit",
+        "message": "remind Katya about the refund",
+        "target": "maple-insurance-refund",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.06 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "explicit",
+        "message": "remind Emeka about the quote",
+        "target": "quote-emeka",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.07 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "explicit",
+        "message": "chase Ulrich on the refund please",
+        "target": "refund-for-ulrich",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.07 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "explicit",
+        "message": "chase Nikhil on the inspection please",
+        "target": "inspection-nikhil",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.07 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "explicit",
+        "message": "remind Ingrid about the deposit",
+        "target": "ingrid-cedarwood-properties",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.07 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "remind Dmitri about the pricing",
+        "target": "dmitri-maple-insurance",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.07 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "chase Dmitri on the visit please",
+        "target": "thread-with-dmitri-on-appointment",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.07 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "what's the latest from Aurelio regarding the security deposit",
+        "target": "cedarwood-properties-deposit",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.07 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "remind Benedikt about the insurance claim",
+        "target": "hollis-legal-claim",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.07 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "what's the latest from Oksana regarding the case",
+        "target": "claim-for-oksana",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.07 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "what's the latest from Wesley regarding the security deposit",
+        "target": "hollis-legal-deposit",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.07 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "chase Soren on the walkthrough please",
+        "target": "inspection-soren",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.07 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "remind Hiroshi about the plan",
+        "target": "membership-hiroshi",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.07 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "vague",
+        "message": "is the Juniper Bank delivery sorted yet?",
+        "target": "shipment-delphine",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.07 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "vague",
+        "message": "anything new from Brightline Dental about the insurance claim?",
+        "target": "soren-brightline-dental",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.07 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "vague",
+        "message": "is the Juniper Bank walkthrough sorted yet?",
+        "target": "juniper-bank-inspection",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.07 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "vague",
+        "message": "where did we land with Brightline Dental on the down payment",
+        "target": "follow-ups-with-soren",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.07 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "vague",
+        "message": "is the Brightline Dental money back sorted yet?",
+        "target": "refund-soren",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.07 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "vague",
+        "message": "where did we land with Atlas Movers on the package",
+        "target": "atlas-movers-shipment",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.07 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "vague",
+        "message": "where did we land with Brightline Dental on the insurance claim",
+        "target": "soren-brightline-dental",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.07 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "vague",
+        "message": "is the Juniper Bank subscription sorted yet?",
+        "target": "juniper-bank-membership",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.07 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "person_only",
+        "message": "nudge Delphine",
+        "target": "juniper-bank-inspection",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.07 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "person_only",
+        "message": "heard back from Ulrich?",
+        "target": "thread-with-ulrich-on-statement",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.07 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "person_only",
+        "message": "heard back from Katya?",
+        "target": "shipment-katya",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.07 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "person_only",
+        "message": "any word from Thandiwe?",
+        "target": "refund-thandiwe",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.07 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "person_only",
+        "message": "nudge Pablo",
+        "target": "shipment-pablo",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.07 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "person_only",
+        "message": "heard back from Gustavo?",
+        "target": "manuscript-gustavo",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.07 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "person_only",
+        "message": "heard back from Jamal?",
+        "target": "maple-insurance-deposit",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.07 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "person_only",
+        "message": "nudge Calla",
+        "target": "calla-atlas-movers",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.07 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "followup",
+        "message": "make it friendlier and send",
+        "target": "harbor-vet-quote",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.07 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "followup",
+        "message": "make it friendlier and send",
+        "target": "lease-esperanza",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.07 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "followup",
+        "message": "perfect, go ahead and send",
+        "target": "deposit-thandiwe",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.07 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "followup",
+        "message": "send it",
+        "target": "claim-for-marisol",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.07 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "followup",
+        "message": "make it friendlier and send",
+        "target": "claim-nikhil",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.07 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "followup",
+        "message": "make it friendlier and send",
+        "target": "hollis-legal-manuscript",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.07 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "followup",
+        "message": "make it friendlier and send",
+        "target": "nikhil-hollis-legal",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.07 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      },
+      {
+        "kind": "followup",
+        "message": "perfect, go ahead and send",
+        "target": "orbit-gym-claim",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (403): {'message': 'Key limit exceeded (total limit). Manage it using https://openrouter.ai/workspaces/default/keys/eb259b5dad8a1de2664a47a81e24624f7d42c1cb5fed881939242720122b3a63 $10.07 of $10.00 used; does not reset.', 'code': 403, 'metadata': {'limit_source': 'openroute"
+      }
+    ]
+  }
+}

@@ -9,24 +9,33 @@ OpenPoke is a simplified, open-source take on [Interaction Company’s](https://
 
 ## This fork: fixing agent overload
 
-Execution agents in OpenPoke persist forever but were never managed. The roster grew without
-bound and was injected in full on every turn, and each agent's full history was re-sent on
-every run. This fork bounds both:
-- a metadata registry with relevance-ranked top-K roster, `search_agents`, and duplicate-name detection;
+Execution agents in OpenPoke persist forever but were never managed:
+- the roster grew without bound and was injected, as bare names, into every turn;
+- each agent's full history was re-sent on every run.
+
+This fork bounds both:
+- a metadata registry, with a relevance-ranked top-K roster with descriptions,
+  `search_agents`, and duplicate-name detection;
 - rolling memory compaction for execution agents.
 
-It also fixes a set of other problems found along the way, including a retired default model
-that made the app unusable.
+On an independent 300-agent workload, correct routing goes from **50% to 88%** (Sonnet 5.5,
+paired p < 0.001). Execution prompts stay under ~11k tokens however often an agent is
+reused.
 
-- **Write-up, results and trade-offs:** [DESIGN.md](DESIGN.md)
+| Read | For |
+|---|---|
+| [DESIGN.md](DESIGN.md) | the problem, the fix, the results (5-minute read) |
+| [EVALUATION.md](EVALUATION.md) | methodology, ablations, caveats, how the prompt evolved |
+| [OTHER_FINDINGS.md](OTHER_FINDINGS.md) | 21 other issues found in OpenPoke, including a retired default model that stopped the app from running |
+
 - **Code:** `server/services/execution/{roster,agent_ranker,agent_memory}.py`, `server/agents/interaction_agent/{agent,tools}.py`
 - **Run the tests and evaluators:**
   ```bash
   python3.11 -m venv .venv && .venv/bin/pip install -r server/requirements.txt pytest tiktoken
-  .venv/bin/python -m pytest                      # 53 tests, no network
-  .venv/bin/python -m evals.prompt_growth         # prompt size vs. #agents and #reuses
-  .venv/bin/python -m evals.routing_offline       # routing recall, K sweep, ablations, dedupe
-  .venv/bin/python -m evals.routing_llm --n 30 --yes   # live LLM routing (needs OPENROUTER_API_KEY)
+  .venv/bin/python -m pytest                              # 62 tests, network blocked
+  .venv/bin/python -m evals.prompt_growth                 # prompt size vs. #agents and #reuses
+  .venv/bin/python -m evals.routing_offline --vocab fresh # routing recall, K sweep, ablations
+  .venv/bin/python -m evals.routing_llm --vocab fresh --n 40 --yes --delay 2   # live (needs OPENROUTER_API_KEY)
   ```
 - **New settings** (all optional): `OPENPOKE_{INTERACTION,EXECUTION,SEARCH,SUMMARIZER,CLASSIFIER}_MODEL`,
   `OPENPOKE_AGENT_ROSTER_LIMIT` (20), `OPENPOKE_AGENT_HISTORY_WINDOW` (5),

@@ -73,14 +73,15 @@ class ExecutionBatchManager:
             # interleave their log entries, corrupting the agent's history. The request is
             # logged here (not at dispatch) so trigger-fired runs are logged too and every
             # run's entries stay contiguous.
-            async with _agent_run_lock(agent_name):
-                get_execution_agent_logs().record_request(agent_name, instructions)
-                logger.info(f"[{agent_name}] Execution started")
-                runtime = ExecutionAgentRuntime(agent_name=agent_name)
-                result = await asyncio.wait_for(
-                    runtime.execute(instructions),
-                    timeout=self.timeout_seconds,
-                )
+            # The timeout covers waiting for the lock too, so a busy agent can't hold a
+            # batch (and everyone's results in it) open past the usual limit.
+            async def _locked_run() -> ExecutionResult:
+                async with _agent_run_lock(agent_name):
+                    get_execution_agent_logs().record_request(agent_name, instructions)
+                    logger.info(f"[{agent_name}] Execution started")
+                    return await ExecutionAgentRuntime(agent_name=agent_name).execute(instructions)
+
+            result = await asyncio.wait_for(_locked_run(), timeout=self.timeout_seconds)
             status = "SUCCESS" if result.success else "FAILED"
             logger.info(f"[{agent_name}] Execution finished: {status}")
         except asyncio.TimeoutError:

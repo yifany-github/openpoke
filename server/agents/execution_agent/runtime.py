@@ -10,7 +10,11 @@ from .tools import get_tool_schemas, get_tool_registry
 from ...config import get_settings
 from ...openrouter_client import request_chat_completion
 from ...logging_config import logger
-from ...services.execution.agent_memory import refresh_description, schedule_compaction
+from ...services.execution.agent_memory import (
+    refresh_description,
+    schedule_compaction,
+    schedule_description,
+)
 
 
 @dataclass
@@ -129,6 +133,7 @@ class ExecutionAgentRuntime:
 
             self.agent.record_response(final_response)
             refresh_description(self.agent.name, final_response)
+            schedule_description(self.agent.name)
             schedule_compaction(self.agent.name)
 
             return ExecutionResult(

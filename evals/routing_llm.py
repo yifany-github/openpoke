@@ -155,12 +155,41 @@ def summarize(all_rows: List[Dict[str, Any]]) -> Dict[str, Any]:
     }
 
 
+CONDITIONS = {
+    "baseline": "original prompt, all agent names, no descriptions, original tools",
+    "after": "fixed system: top-K roster with descriptions + search_agents + name resolution",
+    "full_roster": "ablation: as 'after' but ALL agents listed (no top-K) - isolates what top-K adds",
+    "after_heuristic_desc": "ablation: as 'after' but descriptions are what the live system writes before "
+                            "the first compaction ('Started for: <first instruction> | Latest: ...'), "
+                            "without company or email",
+}
+
+
+def heuristic_records(scenarios):
+    """Descriptions as the production heuristic would write them early in an agent's life:
+    the first instruction plus the latest outcome. Deliberately omits company and email."""
+    out = []
+    for s in scenarios:
+        r = copy.deepcopy(s.record)
+        r.description = (f"Started for: Email {s.person} about the {s.topic}. | Latest: Draft created for "
+                         f"{s.person}, waiting for the user to confirm before sending.")
+        out.append(r)
+    return out
+
+
 async def main_async(args) -> None:
     settings = get_settings()
     model = args.model or settings.interaction_agent_model
     rng = random.Random(args.seed)
-    scenarios = build_registry(rng)
-    queries = build_queries(rng, scenarios)
+    if args.vocab == "fresh":
+        from evals import workload_fresh as W
+
+        rng = random.Random(21)  # descriptions in results/fresh_descriptions.json are keyed to this seed
+        scenarios = W.build_registry(rng)
+        queries = W.build_queries(rng, scenarios)
+    else:
+        scenarios = build_registry(rng)
+        queries = build_queries(rng, scenarios)
     per_kind = max(1, args.n // len(KINDS))
     kinds = args.kinds.split(",") if args.kinds else KINDS
     sample = [q for k in kinds for q in [x for x in queries if x.kind == k][:per_kind]]
@@ -181,13 +210,20 @@ async def main_async(args) -> None:
 
         results: Dict[str, Any] = {"model": model, "agents": len(records)}
         results["seed"] = args.seed
+        results["vocab"] = args.vocab
+        default_k = settings.agent_roster_prompt_limit
         for condition in args.conditions.split(","):
+            if condition not in CONDITIONS:
+                sys.exit(f"unknown condition {condition!r}; choose from {', '.join(CONDITIONS)}")
             system_prompt = baseline_system_prompt() if condition == "baseline" else ia_agent.build_system_prompt()
             tools = baseline_tools() if condition == "baseline" else ia_tools.TOOL_SCHEMAS
+            # Ablations: same prompt/tools/registry as "after", one factor changed.
+            settings.agent_roster_prompt_limit = 10_000 if condition == "full_roster" else default_k
+            cond_records = heuristic_records(scenarios) if condition == "after_heuristic_desc" else records
             rows = []
             for i, q in enumerate(sample, 1):
                 try:
-                    row = await run_one(q, condition, model, records, system_prompt, tools)
+                    row = await run_one(q, condition, model, cond_records, system_prompt, tools)
                 except Exception as exc:  # one flaky API call must not sink the whole run
                     row = {"kind": q.kind, "message": q.message, "target": q.target_key, "chosen": None,
                            "prompt_tokens": 0, "calls": 0, "correct": False, "outcome": "api_error",
@@ -212,6 +248,8 @@ def main() -> None:
     parser.add_argument("--seed", type=int, default=7, help="workload seed (7 = dev set, 11 = held-out)")
     parser.add_argument("--conditions", default="baseline,after")
     parser.add_argument("--kinds", default="", help="comma-separated subset of query kinds")
+    parser.add_argument("--vocab", choices=["dev", "fresh"], default="dev",
+                        help="dev = templates used while tuning (seed picks a sample); fresh = independent workload")
     args = parser.parse_args()
     global CALL_DELAY
     CALL_DELAY = args.delay

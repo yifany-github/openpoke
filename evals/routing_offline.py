@@ -259,10 +259,23 @@ def _table(rows: List[dict]) -> str:
 
 
 def main() -> None:
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--vocab", choices=["dev", "fresh"], default="dev",
+                        help="dev = workload used while tuning; fresh = independent workload (evals/workload_fresh.py)")
+    args = parser.parse_args()
     logging.getLogger("openpoke.server").setLevel(logging.WARNING)
-    rng = random.Random(7)
-    scenarios = build_registry(rng)
-    queries = build_queries(rng, scenarios)
+    if args.vocab == "fresh":
+        from evals import workload_fresh as W
+
+        rng = random.Random(21)
+        scenarios = W.build_registry(rng)
+        queries = W.build_queries(rng, scenarios)
+    else:
+        rng = random.Random(7)
+        scenarios = build_registry(rng)
+        queries = build_queries(rng, scenarios)
 
     with tempfile.TemporaryDirectory() as d:
         roster_mod._agent_roster = AgentRoster(Path(d) / "roster.json")
@@ -287,7 +300,8 @@ def main() -> None:
         "dedupe": dedupe_eval(),
     }
     RESULTS_DIR.mkdir(exist_ok=True)
-    (RESULTS_DIR / "routing_offline.json").write_text(json.dumps(results, indent=2))
+    out_name = "routing_offline.json" if args.vocab == "dev" else "routing_offline_fresh.json"
+    (RESULTS_DIR / out_name).write_text(json.dumps(results, indent=2))
 
     print(f"# Offline routing eval ({len(scenarios)} agents, {len(queries)} queries)\n")
     print(f"Baseline: all {len(scenarios)} names listed, recall 1.0, {results['baseline']['block_tokens']} tokens, no descriptions\n")

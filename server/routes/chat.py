@@ -23,7 +23,9 @@ def chat_history() -> ChatHistoryResponse:
 
 
 @router.delete("/history", response_model=ChatHistoryClearResponse)
-def clear_history() -> ChatHistoryClearResponse:
+async def clear_history() -> ChatHistoryClearResponse:
+    # async on purpose: as a plain def, FastAPI runs this in a worker thread, where it could
+    # interleave with a memory compaction's check-then-save on the event loop.
     from ..services import get_execution_agent_logs, get_agent_roster
 
     # Clear conversation log

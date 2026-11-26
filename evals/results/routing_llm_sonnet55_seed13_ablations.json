@@ -1,0 +1,852 @@
+{
+  "model": "anthropic/claude-sonnet-5.5",
+  "agents": 300,
+  "seed": 13,
+  "full_roster": {
+    "summary": {
+      "n": 22,
+      "api_errors": 8,
+      "accuracy": 0.864,
+      "new_duplicate_rate": 0.136,
+      "wrong_existing_rate": 0.0,
+      "no_dispatch_rate": 0.0,
+      "avg_prompt_tokens_per_query": 37258,
+      "avg_llm_calls": 1.23,
+      "accuracy_by_kind": {
+        "explicit": 1.0,
+        "paraphrase": 0.667,
+        "vague": 0.833,
+        "person_only": 1.0,
+        "followup": 1.0
+      }
+    },
+    "rows": [
+      {
+        "kind": "explicit",
+        "message": "any update from Aisha on the interview?",
+        "target": "reply-to-aisha-re-interview",
+        "chosen": "Reply to Aisha re interview",
+        "prompt_tokens": 30141,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Checking the Aisha at Plaid interview thread."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "explicit",
+        "message": "what did Lucas say re the renewal",
+        "target": "brex-renewal-with-lucas",
+        "chosen": "Brex renewal with Lucas",
+        "prompt_tokens": 30141,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Checking the Brex renewal thread with Lucas."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "explicit",
+        "message": "can you nudge Keith about the referral",
+        "target": "stripe-referral-with-keith",
+        "chosen": "Stripe referral with Keith",
+        "prompt_tokens": 30141,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "explicit",
+        "message": "did Felix reply about the offer?",
+        "target": "vercel-offer-with-felix",
+        "chosen": "Vercel offer with Felix",
+        "prompt_tokens": 30140,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Checking the Vercel offer thread with Felix."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "explicit",
+        "message": "follow up with Mei at Notion about the contract",
+        "target": "contract-with-mei",
+        "chosen": "contract with Mei",
+        "prompt_tokens": 30144,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "On it, nudging Mei at Notion about the contract. Draft coming up."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "explicit",
+        "message": "follow up with Sharanjeet at Plaid about the invoice",
+        "target": "sharanjeet-invoice",
+        "chosen": "Sharanjeet invoice",
+        "prompt_tokens": 30150,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "On it, drafting a follow-up to Sharanjeet at Plaid about the invoice."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "any update from Bob on the subscription?",
+        "target": "bob-renewal",
+        "chosen": "Bob subscription search",
+        "prompt_tokens": 92858,
+        "calls": 3,
+        "rejections": 1,
+        "searches": 1,
+        "said_to_user": [
+          "I've got a bunch of Bobs but none on a subscription thread. I'll search your inbox for it."
+        ],
+        "correct": false,
+        "outcome": "new_duplicate"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "what did Tom say re the collab",
+        "target": "tom-partnership",
+        "chosen": "Tom partnership",
+        "prompt_tokens": 30139,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "follow up with Lucas at Ramp about the connecting us",
+        "target": "intro-with-lucas",
+        "chosen": "intro with Lucas",
+        "prompt_tokens": 30148,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "On it, drafting a follow-up to Lucas at Ramp."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "any update from Hannah on the review notes?",
+        "target": "hannah-feedback",
+        "chosen": "Hannah review notes search",
+        "prompt_tokens": 92713,
+        "calls": 3,
+        "rejections": 1,
+        "searches": 1,
+        "correct": false,
+        "outcome": "new_duplicate"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "follow up with Zara at Retool about the subscription",
+        "target": "zara-renewal",
+        "chosen": "Zara renewal",
+        "prompt_tokens": 30145,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "did Olga reply about the agreement?",
+        "target": "olga-at-brex",
+        "chosen": "Olga at Brex",
+        "prompt_tokens": 30141,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Checking the Olga at Brex thread (the contract one). Shout if you meant a different Olga."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "vague",
+        "message": "any news on the Airtable lunch plans?",
+        "target": "email-to-ivan",
+        "chosen": "Email to Ivan",
+        "prompt_tokens": 30143,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Checking the Airtable lunch thread with Ivan."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "vague",
+        "message": "did the Notion product walkthrough go through?",
+        "target": "fatima-demo",
+        "chosen": "Notion product walkthrough status",
+        "prompt_tokens": 61273,
+        "calls": 2,
+        "rejections": 0,
+        "searches": 1,
+        "correct": false,
+        "outcome": "new_duplicate"
+      },
+      {
+        "kind": "vague",
+        "message": "did the Notion lunch plans go through?",
+        "target": "lunch-with-ines",
+        "chosen": "lunch with Ines",
+        "prompt_tokens": 30142,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "vague",
+        "message": "did the Retool bill go through?",
+        "target": "chen-invoice",
+        "chosen": "Chen invoice",
+        "prompt_tokens": 30139,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Checking the Retool invoice thread with Chen."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "vague",
+        "message": "where are we with Linear on the referral",
+        "target": "linear-referral",
+        "chosen": "Linear referral",
+        "prompt_tokens": 30140,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "vague",
+        "message": "did the Retool payment go through?",
+        "target": "chen-invoice",
+        "chosen": "Chen invoice",
+        "prompt_tokens": 30139,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "person_only",
+        "message": "ping Felix again",
+        "target": "vercel-demo",
+        "chosen": "Vercel demo",
+        "prompt_tokens": 30135,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "person_only",
+        "message": "anything back from Jonas?",
+        "target": "email-to-jonas",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (402): {'message': 'This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.', 'code': 402, 'metadata': {'reason': 'in_flight_budget_exhausted', 'limit_source': 'openrouter_in_flight_budge"
+      },
+      {
+        "kind": "person_only",
+        "message": "did Olga reply?",
+        "target": "email-to-olga",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (402): {'message': 'This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.', 'code': 402, 'metadata': {'reason': 'in_flight_budget_exhausted', 'limit_source': 'openrouter_in_flight_budge"
+      },
+      {
+        "kind": "person_only",
+        "message": "did Kenji reply?",
+        "target": "reply-to-kenji-re-offer",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (402): {'message': 'This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.', 'code': 402, 'metadata': {'reason': 'in_flight_budget_exhausted', 'limit_source': 'openrouter_in_flight_budge"
+      },
+      {
+        "kind": "person_only",
+        "message": "anything back from Aisha?",
+        "target": "aisha-at-ramp",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (402): {'message': 'This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.', 'code': 402, 'metadata': {'reason': 'in_flight_budget_exhausted', 'limit_source': 'openrouter_in_flight_budge"
+      },
+      {
+        "kind": "person_only",
+        "message": "did Ivan reply?",
+        "target": "retool-renewal-with-ivan",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (402): {'message': 'This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.', 'code': 402, 'metadata': {'reason': 'in_flight_budget_exhausted', 'limit_source': 'openrouter_in_flight_budge"
+      },
+      {
+        "kind": "followup",
+        "message": "looks good, ship it",
+        "target": "reply-to-chen-re-renewal",
+        "chosen": "Reply to Chen re renewal",
+        "prompt_tokens": 30187,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Sending it to Chen now."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "followup",
+        "message": "ok go ahead",
+        "target": "reply-to-kenji-re-referral",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (402): {'message': 'This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.', 'code': 402, 'metadata': {'reason': 'in_flight_budget_exhausted', 'limit_source': 'openrouter_in_flight_budge"
+      },
+      {
+        "kind": "followup",
+        "message": "looks good, ship it",
+        "target": "figma-intro-with-felix",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (402): {'message': 'This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.', 'code': 402, 'metadata': {'reason': 'in_flight_budget_exhausted', 'limit_source': 'openrouter_in_flight_budge"
+      },
+      {
+        "kind": "followup",
+        "message": "yes send it",
+        "target": "keith-invoice",
+        "chosen": null,
+        "prompt_tokens": 0,
+        "calls": 0,
+        "correct": false,
+        "outcome": "api_error",
+        "error": "OpenRouter request failed (402): {'message': 'This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.', 'code': 402, 'metadata': {'reason': 'in_flight_budget_exhausted', 'limit_source': 'openrouter_in_flight_budge"
+      },
+      {
+        "kind": "followup",
+        "message": "change the time to 3pm then send",
+        "target": "contract-with-grace",
+        "chosen": "contract with Grace",
+        "prompt_tokens": 30184,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "followup",
+        "message": "change the time to 3pm then send",
+        "target": "priya-meeting",
+        "chosen": "Priya meeting",
+        "prompt_tokens": 30185,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      }
+    ]
+  },
+  "after_heuristic_desc": {
+    "summary": {
+      "n": 30,
+      "api_errors": 0,
+      "accuracy": 0.767,
+      "new_duplicate_rate": 0.133,
+      "wrong_existing_rate": 0.067,
+      "no_dispatch_rate": 0.033,
+      "avg_prompt_tokens_per_query": 9210,
+      "avg_llm_calls": 1.33,
+      "accuracy_by_kind": {
+        "explicit": 1.0,
+        "paraphrase": 0.667,
+        "vague": 0.167,
+        "person_only": 1.0,
+        "followup": 1.0
+      }
+    },
+    "rows": [
+      {
+        "kind": "explicit",
+        "message": "any update from Aisha on the interview?",
+        "target": "reply-to-aisha-re-interview",
+        "chosen": "Reply to Aisha re interview",
+        "prompt_tokens": 6675,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Checking the Aisha interview thread now."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "explicit",
+        "message": "what did Lucas say re the renewal",
+        "target": "brex-renewal-with-lucas",
+        "chosen": "Brex renewal with Lucas",
+        "prompt_tokens": 6662,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Checking the Brex renewal thread with Lucas."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "explicit",
+        "message": "can you nudge Keith about the referral",
+        "target": "stripe-referral-with-keith",
+        "chosen": "Stripe referral with Keith",
+        "prompt_tokens": 6628,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "on it, drafting a nudge to Keith about the referral."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "explicit",
+        "message": "did Felix reply about the offer?",
+        "target": "vercel-offer-with-felix",
+        "chosen": "Vercel offer with Felix",
+        "prompt_tokens": 6610,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Checking the Vercel offer thread with Felix."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "explicit",
+        "message": "follow up with Mei at Notion about the contract",
+        "target": "contract-with-mei",
+        "chosen": "contract with Mei",
+        "prompt_tokens": 6617,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "On it. Pulling up your contract thread with Mei and drafting a nudge."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "explicit",
+        "message": "follow up with Sharanjeet at Plaid about the invoice",
+        "target": "sharanjeet-invoice",
+        "chosen": "Sharanjeet invoice",
+        "prompt_tokens": 6742,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "any update from Bob on the subscription?",
+        "target": "bob-renewal",
+        "chosen": "Bob subscription",
+        "prompt_tokens": 22231,
+        "calls": 3,
+        "rejections": 1,
+        "searches": 1,
+        "said_to_user": [
+          "Checking your inbox for anything from Bob on the subscription."
+        ],
+        "correct": false,
+        "outcome": "new_duplicate"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "what did Tom say re the collab",
+        "target": "tom-partnership",
+        "chosen": "Tom collab lookup",
+        "prompt_tokens": 22301,
+        "calls": 3,
+        "rejections": 1,
+        "searches": 1,
+        "said_to_user": [
+          "Checking your inbox for Tom's note on the collab."
+        ],
+        "correct": false,
+        "outcome": "new_duplicate"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "follow up with Lucas at Ramp about the connecting us",
+        "target": "intro-with-lucas",
+        "chosen": "intro with Lucas",
+        "prompt_tokens": 6670,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "any update from Hannah on the review notes?",
+        "target": "hannah-feedback",
+        "chosen": "Hannah feedback",
+        "prompt_tokens": 14223,
+        "calls": 2,
+        "rejections": 0,
+        "searches": 1,
+        "said_to_user": [
+          "Checking the Hannah feedback thread for her review notes."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "follow up with Zara at Retool about the subscription",
+        "target": "zara-renewal",
+        "chosen": "Zara renewal",
+        "prompt_tokens": 6594,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "did Olga reply about the agreement?",
+        "target": "olga-at-brex",
+        "chosen": "Olga at Brex",
+        "prompt_tokens": 13987,
+        "calls": 2,
+        "rejections": 0,
+        "searches": 1,
+        "said_to_user": [
+          "Checking the Olga at Brex thread (closest match for the agreement)."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "vague",
+        "message": "any news on the Airtable lunch plans?",
+        "target": "email-to-ivan",
+        "chosen": "Airtable lunch plans status",
+        "prompt_tokens": 14253,
+        "calls": 2,
+        "rejections": 0,
+        "searches": 1,
+        "correct": false,
+        "outcome": "new_duplicate"
+      },
+      {
+        "kind": "vague",
+        "message": "did the Notion product walkthrough go through?",
+        "target": "fatima-demo",
+        "chosen": "Notion product walkthrough check",
+        "prompt_tokens": 14348,
+        "calls": 2,
+        "rejections": 0,
+        "searches": 1,
+        "said_to_user": [
+          "Checking on that now."
+        ],
+        "correct": false,
+        "outcome": "new_duplicate"
+      },
+      {
+        "kind": "vague",
+        "message": "did the Notion lunch plans go through?",
+        "target": "lunch-with-ines",
+        "chosen": null,
+        "prompt_tokens": 14197,
+        "calls": 2,
+        "rejections": 0,
+        "searches": 1,
+        "said_to_user": [
+          "I can't find a thread called \"Notion lunch.\" The closest are the lunch threads with Bob, Raj, Yuki, Mei, Diego, Alice, Sofia and Zara, and all of them still have drafts waiting on your confirmation. Which person did you mean?"
+        ],
+        "correct": false,
+        "outcome": "no_dispatch"
+      },
+      {
+        "kind": "vague",
+        "message": "did the Retool bill go through?",
+        "target": "chen-invoice",
+        "chosen": "Retool renewal with Ivan",
+        "prompt_tokens": 14340,
+        "calls": 2,
+        "rejections": 0,
+        "searches": 1,
+        "said_to_user": [
+          "Checking on the Retool bill now."
+        ],
+        "correct": false,
+        "outcome": "wrong_existing"
+      },
+      {
+        "kind": "vague",
+        "message": "where are we with Linear on the referral",
+        "target": "linear-referral",
+        "chosen": "Linear referral",
+        "prompt_tokens": 6622,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "vague",
+        "message": "did the Retool payment go through?",
+        "target": "chen-invoice",
+        "chosen": "Retool renewal with Ivan",
+        "prompt_tokens": 6640,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Checking on that now, starting with the Retool renewal thread with Ivan."
+        ],
+        "correct": false,
+        "outcome": "wrong_existing"
+      },
+      {
+        "kind": "person_only",
+        "message": "ping Felix again",
+        "target": "vercel-demo",
+        "chosen": "Vercel demo",
+        "prompt_tokens": 6633,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "person_only",
+        "message": "anything back from Jonas?",
+        "target": "email-to-jonas",
+        "chosen": "Email to Jonas",
+        "prompt_tokens": 6680,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "person_only",
+        "message": "did Olga reply?",
+        "target": "email-to-olga",
+        "chosen": "Email to Olga",
+        "prompt_tokens": 6652,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "person_only",
+        "message": "did Kenji reply?",
+        "target": "reply-to-kenji-re-offer",
+        "chosen": "Reply to Kenji re offer",
+        "prompt_tokens": 6674,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Checking the Kenji offer thread, your most recent one."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "person_only",
+        "message": "anything back from Aisha?",
+        "target": "aisha-at-ramp",
+        "chosen": "Aisha at Ramp",
+        "prompt_tokens": 6681,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Checking the Ramp renewal thread with Aisha, your most recent one."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "person_only",
+        "message": "did Ivan reply?",
+        "target": "retool-renewal-with-ivan",
+        "chosen": "Retool renewal with Ivan",
+        "prompt_tokens": 6669,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Checking the Retool renewal thread with Ivan, your most recent one."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "followup",
+        "message": "looks good, ship it",
+        "target": "reply-to-chen-re-renewal",
+        "chosen": "Reply to Chen re renewal",
+        "prompt_tokens": 6682,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Sending it to Chen now."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "followup",
+        "message": "ok go ahead",
+        "target": "reply-to-kenji-re-referral",
+        "chosen": "Reply to Kenji re referral",
+        "prompt_tokens": 6692,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Sending it to Kenji now."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "followup",
+        "message": "looks good, ship it",
+        "target": "figma-intro-with-felix",
+        "chosen": "Figma intro with Felix",
+        "prompt_tokens": 6643,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Sending it to Felix now."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "followup",
+        "message": "yes send it",
+        "target": "keith-invoice",
+        "chosen": "Keith invoice",
+        "prompt_tokens": 6665,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Sending it now."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "followup",
+        "message": "change the time to 3pm then send",
+        "target": "contract-with-grace",
+        "chosen": "contract with Grace",
+        "prompt_tokens": 6657,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "followup",
+        "message": "change the time to 3pm then send",
+        "target": "priya-meeting",
+        "chosen": "Priya meeting",
+        "prompt_tokens": 6642,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      }
+    ]
+  }
+}

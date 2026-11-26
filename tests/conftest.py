@@ -55,3 +55,14 @@ def settings(monkeypatch):
 
 def days_ago(n: float) -> datetime:
     return NOW - timedelta(days=n)
+
+
+@pytest.fixture(autouse=True)
+def no_network(monkeypatch):
+    """Tests never talk to OpenRouter: any real client construction fails loudly."""
+    from server.openrouter_client import client as client_mod
+
+    def _blocked(*args, **kwargs):
+        raise RuntimeError("network access in tests is blocked")
+
+    monkeypatch.setattr(client_mod, "_client_factory", _blocked)
