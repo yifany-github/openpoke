@@ -2,12 +2,19 @@
 
 from html import escape
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Set
 
+from ...config import get_settings
+from ...logging_config import logger
 from ...services.execution import get_agent_roster
+from ...services.execution.agent_ranker import mentioned_agent_keys, select_agents
+from ...services.execution.roster import agent_key
 
 _prompt_path = Path(__file__).parent / "system_prompt.md"
 SYSTEM_PROMPT = _prompt_path.read_text(encoding="utf-8").strip()
+
+# How much of the recent conversation feeds the agent-relevance query.
+_QUERY_TRANSCRIPT_TAIL_CHARS = 1500
 
 
 # Load and return the pre-defined system prompt from markdown file
@@ -25,8 +32,9 @@ def prepare_message_with_history(
     """Compose a message that bundles history, roster, and the latest turn."""
     sections: List[str] = []
 
+    query = f"{latest_text}\n{transcript[-_QUERY_TRANSCRIPT_TAIL_CHARS:]}"
     sections.append(_render_conversation_history(transcript))
-    sections.append(f"<active_agents>\n{_render_active_agents()}\n</active_agents>")
+    sections.append(f"<active_agents>\n{_render_active_agents(query, pinned_text=latest_text)}\n</active_agents>")
     sections.append(_render_current_turn(latest_text, message_type))
 
     content = "\n\n".join(sections)
@@ -41,19 +49,55 @@ def _render_conversation_history(transcript: str) -> str:
     return f"<conversation_history>\n{history}\n</conversation_history>"
 
 
-# Format currently active execution agents into XML tags for LLM awareness
-def _render_active_agents() -> str:
+def _trigger_pinned_keys() -> Set[str]:
+    try:
+        from ...services.triggers import get_trigger_service
+
+        return {agent_key(name) for name in get_trigger_service().agents_with_active_triggers()}
+    except Exception as exc:  # pragma: no cover - defensive
+        logger.warning(f"Could not load trigger-owning agents: {exc}")
+        return set()
+
+
+# Render the most relevant execution agents (not all of them) for this turn
+def _render_active_agents(query: str = "", pinned_text: str = "") -> str:
     roster = get_agent_roster()
     roster.load()
-    agents = roster.get_agents()
+    records = roster.records()
 
-    if not agents:
+    if not records:
         return "None"
 
+    pinned = _trigger_pinned_keys() | mentioned_agent_keys(records, pinned_text)
+    selection = select_agents(
+        records,
+        query,
+        k=get_settings().agent_roster_prompt_limit,
+        pinned_keys=pinned,
+    )
+
     rendered: List[str] = []
-    for agent_name in agents:
-        name = escape(agent_name or "agent", quote=True)
-        rendered.append(f'<agent name="{name}" />')
+    for record in selection.shown:
+        attrs = [f'name="{escape(record.name, quote=True)}"']
+        last_used = record.last_used_dt
+        if last_used is not None:
+            attrs.append(f'last_used="{last_used.strftime("%Y-%m-%d")}"')
+        if record.run_count:
+            attrs.append(f'runs="{record.run_count}"')
+        if record.key in selection.pinned_keys:
+            attrs.append('pinned="true"')
+        description = escape(record.description, quote=False)
+        if description:
+            rendered.append(f"<agent {' '.join(attrs)}>{description}</agent>")
+        else:
+            rendered.append(f"<agent {' '.join(attrs)} />")
+
+    if selection.hidden_count:
+        rendered.append(
+            f'<more_agents count="{selection.hidden_count}">Older or less relevant agents are not listed. '
+            "If this turn continues earlier work that is not shown above, call search_agents before "
+            "creating a new agent.</more_agents>"
+        )
 
     return "\n".join(rendered)
 

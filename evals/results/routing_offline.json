@@ -1,0 +1,136 @@
+{
+  "agents": 300,
+  "queries": 240,
+  "baseline": {
+    "recall": 1.0,
+    "block_tokens": 2988,
+    "descriptions": false
+  },
+  "k_sweep": [
+    {
+      "strategy": "hybrid (ours)",
+      "k": 5,
+      "recall": 0.858,
+      "recall_with_search": 0.912,
+      "top3": 0.804,
+      "avg_block_tokens": 323,
+      "recall_explicit": 1.0,
+      "recall_followup": 1.0,
+      "recall_paraphrase": 0.729,
+      "recall_person_only": 1.0,
+      "recall_vague": 0.562
+    },
+    {
+      "strategy": "hybrid (ours)",
+      "k": 10,
+      "recall": 0.912,
+      "recall_with_search": 0.912,
+      "top3": 0.804,
+      "avg_block_tokens": 604,
+      "recall_explicit": 1.0,
+      "recall_followup": 1.0,
+      "recall_paraphrase": 0.958,
+      "recall_person_only": 1.0,
+      "recall_vague": 0.604
+    },
+    {
+      "strategy": "hybrid (ours)",
+      "k": 15,
+      "recall": 0.942,
+      "recall_with_search": 0.942,
+      "top3": 0.804,
+      "avg_block_tokens": 882,
+      "recall_explicit": 1.0,
+      "recall_followup": 1.0,
+      "recall_paraphrase": 1.0,
+      "recall_person_only": 1.0,
+      "recall_vague": 0.708
+    },
+    {
+      "strategy": "hybrid (ours)",
+      "k": 20,
+      "recall": 0.975,
+      "recall_with_search": 0.975,
+      "top3": 0.804,
+      "avg_block_tokens": 1161,
+      "recall_explicit": 1.0,
+      "recall_followup": 1.0,
+      "recall_paraphrase": 1.0,
+      "recall_person_only": 1.0,
+      "recall_vague": 0.875
+    },
+    {
+      "strategy": "hybrid (ours)",
+      "k": 30,
+      "recall": 1.0,
+      "recall_with_search": 1.0,
+      "top3": 0.804,
+      "avg_block_tokens": 1721,
+      "recall_explicit": 1.0,
+      "recall_followup": 1.0,
+      "recall_paraphrase": 1.0,
+      "recall_person_only": 1.0,
+      "recall_vague": 1.0
+    }
+  ],
+  "ablation_k20": [
+    {
+      "strategy": "recency only",
+      "k": 20,
+      "recall": 0.217,
+      "recall_with_search": 0.396,
+      "top3": 0.042,
+      "avg_block_tokens": 1157,
+      "recall_explicit": 0.104,
+      "recall_followup": 0.083,
+      "recall_paraphrase": 0.062,
+      "recall_person_only": 0.688,
+      "recall_vague": 0.146
+    },
+    {
+      "strategy": "BM25 only",
+      "k": 20,
+      "recall": 0.963,
+      "recall_with_search": 0.963,
+      "top3": 0.671,
+      "avg_block_tokens": 1171,
+      "recall_explicit": 1.0,
+      "recall_followup": 1.0,
+      "recall_paraphrase": 1.0,
+      "recall_person_only": 1.0,
+      "recall_vague": 0.812
+    },
+    {
+      "strategy": "hybrid (ours)",
+      "k": 20,
+      "recall": 0.975,
+      "recall_with_search": 0.975,
+      "top3": 0.804,
+      "avg_block_tokens": 1161,
+      "recall_explicit": 1.0,
+      "recall_followup": 1.0,
+      "recall_paraphrase": 1.0,
+      "recall_person_only": 1.0,
+      "recall_vague": 0.875
+    }
+  ],
+  "dedupe": {
+    "same_thread_pairs": 20,
+    "baseline_duplicates_created": 20,
+    "baseline_slug_collisions": 2,
+    "after_auto_reused": 2,
+    "after_flagged": 18,
+    "after_duplicates_created": 0,
+    "after_missed_pairs": [],
+    "different_thread_pairs": 16,
+    "after_false_flags": 1,
+    "after_false_flag_pairs": [
+      [
+        "Email to Alice",
+        "Alice contract"
+      ]
+    ],
+    "catch_rate": 1.0,
+    "false_flag_rate": 0.062
+  }
+}

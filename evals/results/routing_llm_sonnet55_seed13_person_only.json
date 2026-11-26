@@ -1,0 +1,197 @@
+{
+  "model": "anthropic/claude-sonnet-5.5",
+  "agents": 300,
+  "seed": 13,
+  "baseline": {
+    "summary": {
+      "n": 6,
+      "api_errors": 0,
+      "accuracy": 0.5,
+      "new_duplicate_rate": 0.167,
+      "wrong_existing_rate": 0.333,
+      "no_dispatch_rate": 0.0,
+      "avg_prompt_tokens_per_query": 9125,
+      "avg_llm_calls": 1.0,
+      "accuracy_by_kind": {
+        "explicit": 0.0,
+        "paraphrase": 0.0,
+        "vague": 0.0,
+        "person_only": 0.5,
+        "followup": 0.0
+      }
+    },
+    "rows": [
+      {
+        "kind": "person_only",
+        "message": "ping Felix again",
+        "target": "vercel-demo",
+        "chosen": "Email to Felix",
+        "prompt_tokens": 9123,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": false,
+        "outcome": "wrong_existing"
+      },
+      {
+        "kind": "person_only",
+        "message": "anything back from Jonas?",
+        "target": "email-to-jonas",
+        "chosen": "Email to Jonas",
+        "prompt_tokens": 9126,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "person_only",
+        "message": "did Olga reply?",
+        "target": "email-to-olga",
+        "chosen": "Email to Olga",
+        "prompt_tokens": 9124,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Checking your inbox for Olga now."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "person_only",
+        "message": "did Kenji reply?",
+        "target": "reply-to-kenji-re-offer",
+        "chosen": "Reply to Kenji re offer",
+        "prompt_tokens": 9125,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "person_only",
+        "message": "anything back from Aisha?",
+        "target": "aisha-at-ramp",
+        "chosen": "Aisha inbox check",
+        "prompt_tokens": 9126,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": false,
+        "outcome": "new_duplicate"
+      },
+      {
+        "kind": "person_only",
+        "message": "did Ivan reply?",
+        "target": "retool-renewal-with-ivan",
+        "chosen": "Email to Ivan",
+        "prompt_tokens": 9125,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": false,
+        "outcome": "wrong_existing"
+      }
+    ]
+  },
+  "after": {
+    "summary": {
+      "n": 6,
+      "api_errors": 0,
+      "accuracy": 1.0,
+      "new_duplicate_rate": 0.0,
+      "wrong_existing_rate": 0.0,
+      "no_dispatch_rate": 0.0,
+      "avg_prompt_tokens_per_query": 6715,
+      "avg_llm_calls": 1.0,
+      "accuracy_by_kind": {
+        "explicit": 0.0,
+        "paraphrase": 0.0,
+        "vague": 0.0,
+        "person_only": 1.0,
+        "followup": 0.0
+      }
+    },
+    "rows": [
+      {
+        "kind": "person_only",
+        "message": "ping Felix again",
+        "target": "vercel-demo",
+        "chosen": "Vercel demo",
+        "prompt_tokens": 6678,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "person_only",
+        "message": "anything back from Jonas?",
+        "target": "email-to-jonas",
+        "chosen": "Email to Jonas",
+        "prompt_tokens": 6725,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Checking your latest thread with Jonas at Retool (the meeting one)."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "person_only",
+        "message": "did Olga reply?",
+        "target": "email-to-olga",
+        "chosen": "Email to Olga",
+        "prompt_tokens": 6679,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "person_only",
+        "message": "did Kenji reply?",
+        "target": "reply-to-kenji-re-offer",
+        "chosen": "Reply to Kenji re offer",
+        "prompt_tokens": 6730,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "person_only",
+        "message": "anything back from Aisha?",
+        "target": "aisha-at-ramp",
+        "chosen": "Aisha at Ramp",
+        "prompt_tokens": 6754,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "person_only",
+        "message": "did Ivan reply?",
+        "target": "retool-renewal-with-ivan",
+        "chosen": "Retool renewal with Ivan",
+        "prompt_tokens": 6725,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      }
+    ]
+  }
+}

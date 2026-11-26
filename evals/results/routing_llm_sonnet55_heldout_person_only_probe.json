@@ -1,0 +1,110 @@
+{
+  "model": "anthropic/claude-sonnet-5.5",
+  "agents": 300,
+  "seed": 11,
+  "after": {
+    "summary": {
+      "n": 6,
+      "api_errors": 0,
+      "accuracy": 0.333,
+      "new_duplicate_rate": 0.0,
+      "wrong_existing_rate": 0.0,
+      "no_dispatch_rate": 0.667,
+      "avg_prompt_tokens_per_query": 6618,
+      "avg_llm_calls": 1.0,
+      "accuracy_by_kind": {
+        "explicit": 0.0,
+        "paraphrase": 0.0,
+        "vague": 0.0,
+        "person_only": 0.333,
+        "followup": 0.0
+      }
+    },
+    "rows": [
+      {
+        "kind": "person_only",
+        "message": "anything back from Kwame?",
+        "target": "kwame-lunch",
+        "chosen": "Kwame lunch",
+        "prompt_tokens": 6628,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "person_only",
+        "message": "did Ivan reply?",
+        "target": "ivan-at-vercel",
+        "chosen": null,
+        "prompt_tokens": 6651,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "You've got a lot of Ivans going: Vercel, Stripe, Ramp, Notion, Brex, Plaid and Airtable. Which one do you mean? If it's the latest thread, that's Ivan at Vercel about the lunch."
+        ],
+        "correct": false,
+        "outcome": "no_dispatch"
+      },
+      {
+        "kind": "person_only",
+        "message": "ping Nora again",
+        "target": "nora-at-plaid",
+        "chosen": null,
+        "prompt_tokens": 6596,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Which Nora? I've got several: Plaid, Stripe, Brex, Linear, Airtable, Notion, Ramp and Retool. The most recent is Plaid, about the interview. Want me to nudge her?"
+        ],
+        "correct": false,
+        "outcome": "no_dispatch"
+      },
+      {
+        "kind": "person_only",
+        "message": "did Diego reply?",
+        "target": "reply-to-diego-re-feedback",
+        "chosen": "Reply to Diego re feedback",
+        "prompt_tokens": 6602,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "person_only",
+        "message": "ping Aisha again",
+        "target": "reply-to-aisha-re-demo",
+        "chosen": null,
+        "prompt_tokens": 6633,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Which Aisha? I've got a few:\n- Linear (demo)\n- Plaid (referral or contract)\n- Retool (partnership)\n- Figma (meeting or offer)\n- Notion (invoice)\n\nThe most recent thread is Linear's demo. Want me to nudge her?"
+        ],
+        "correct": false,
+        "outcome": "no_dispatch"
+      },
+      {
+        "kind": "person_only",
+        "message": "did Chen reply?",
+        "target": "contract-with-chen",
+        "chosen": null,
+        "prompt_tokens": 6597,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "You've got a lot of Chens going. Which one: Linear (contract), Brex (renewal), Ramp (demo), Retool (lunch or offer), Stripe (partnership or referral), Plaid, or Notion? I can also check all of them if you'd like."
+        ],
+        "correct": false,
+        "outcome": "no_dispatch"
+      }
+    ]
+  }
+}

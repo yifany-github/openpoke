@@ -1,0 +1,171 @@
+{
+  "label": "after",
+  "tokenizer": "cl100k_base (proxy for Claude)",
+  "assumptions": {
+    "tool_calls_per_run": 3,
+    "llm_iterations_per_run": 4
+  },
+  "width": [
+    {
+      "agents": 0,
+      "roster_tokens": 1,
+      "agents_listed": 0,
+      "system_prompt_tokens": 2296
+    },
+    {
+      "agents": 10,
+      "roster_tokens": 435,
+      "agents_listed": 10,
+      "system_prompt_tokens": 2296
+    },
+    {
+      "agents": 50,
+      "roster_tokens": 907,
+      "agents_listed": 20,
+      "system_prompt_tokens": 2296
+    },
+    {
+      "agents": 100,
+      "roster_tokens": 923,
+      "agents_listed": 20,
+      "system_prompt_tokens": 2296
+    },
+    {
+      "agents": 300,
+      "roster_tokens": 928,
+      "agents_listed": 20,
+      "system_prompt_tokens": 2296
+    },
+    {
+      "agents": 1000,
+      "roster_tokens": 942,
+      "agents_listed": 20,
+      "system_prompt_tokens": 2296
+    }
+  ],
+  "depth": [
+    {
+      "runs": 1,
+      "system_prompt_tokens": 1756,
+      "history_tokens": 941,
+      "peak_prompt_tokens_so_far": 1756,
+      "tokens_per_run_est": 7024,
+      "fits_context": true
+    },
+    {
+      "runs": 5,
+      "system_prompt_tokens": 5472,
+      "history_tokens": 4657,
+      "peak_prompt_tokens_so_far": 5472,
+      "tokens_per_run_est": 21888,
+      "fits_context": true
+    },
+    {
+      "runs": 10,
+      "system_prompt_tokens": 10117,
+      "history_tokens": 9302,
+      "peak_prompt_tokens_so_far": 10117,
+      "tokens_per_run_est": 40468,
+      "fits_context": true
+    },
+    {
+      "runs": 25,
+      "system_prompt_tokens": 10130,
+      "history_tokens": 9315,
+      "peak_prompt_tokens_so_far": 10130,
+      "tokens_per_run_est": 40520,
+      "fits_context": true
+    },
+    {
+      "runs": 50,
+      "system_prompt_tokens": 10130,
+      "history_tokens": 9315,
+      "peak_prompt_tokens_so_far": 10130,
+      "tokens_per_run_est": 40520,
+      "fits_context": true
+    },
+    {
+      "runs": 100,
+      "system_prompt_tokens": 10130,
+      "history_tokens": 9315,
+      "peak_prompt_tokens_so_far": 10130,
+      "tokens_per_run_est": 40520,
+      "fits_context": true
+    },
+    {
+      "runs": 200,
+      "system_prompt_tokens": 10130,
+      "history_tokens": 9315,
+      "peak_prompt_tokens_so_far": 10130,
+      "tokens_per_run_est": 40520,
+      "fits_context": true
+    }
+  ],
+  "slug_collision": {
+    "roster_entries": 1,
+    "log_files": 1,
+    "names": [
+      "Email to Alice",
+      "email-to-alice",
+      "Email  to  Alice!"
+    ]
+  },
+  "depth_with_compaction": [
+    {
+      "runs": 1,
+      "system_prompt_tokens": 1756,
+      "history_tokens": 941,
+      "peak_prompt_tokens_so_far": 1756,
+      "tokens_per_run_est": 7024,
+      "fits_context": true
+    },
+    {
+      "runs": 5,
+      "system_prompt_tokens": 5472,
+      "history_tokens": 4657,
+      "peak_prompt_tokens_so_far": 5472,
+      "tokens_per_run_est": 21888,
+      "fits_context": true
+    },
+    {
+      "runs": 10,
+      "system_prompt_tokens": 6727,
+      "history_tokens": 5912,
+      "peak_prompt_tokens_so_far": 10117,
+      "tokens_per_run_est": 26908,
+      "fits_context": true
+    },
+    {
+      "runs": 25,
+      "system_prompt_tokens": 6727,
+      "history_tokens": 5912,
+      "peak_prompt_tokens_so_far": 11372,
+      "tokens_per_run_est": 26908,
+      "fits_context": true
+    },
+    {
+      "runs": 50,
+      "system_prompt_tokens": 6727,
+      "history_tokens": 5912,
+      "peak_prompt_tokens_so_far": 11372,
+      "tokens_per_run_est": 26908,
+      "fits_context": true
+    },
+    {
+      "runs": 100,
+      "system_prompt_tokens": 6727,
+      "history_tokens": 5912,
+      "peak_prompt_tokens_so_far": 11372,
+      "tokens_per_run_est": 26908,
+      "fits_context": true
+    },
+    {
+      "runs": 200,
+      "system_prompt_tokens": 6727,
+      "history_tokens": 5912,
+      "peak_prompt_tokens_so_far": 11372,
+      "tokens_per_run_est": 26908,
+      "fits_context": true
+    }
+  ]
+}

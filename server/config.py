@@ -50,12 +50,14 @@ class Settings(BaseModel):
     server_host: str = Field(default=os.getenv("OPENPOKE_HOST", "0.0.0.0"))
     server_port: int = Field(default=_env_int("OPENPOKE_PORT", 8001))
 
-    # LLM model selection
-    interaction_agent_model: str = Field(default="anthropic/claude-sonnet-4")
-    execution_agent_model: str = Field(default="anthropic/claude-sonnet-4")
-    execution_agent_search_model: str = Field(default="anthropic/claude-sonnet-4")
-    summarizer_model: str = Field(default="anthropic/claude-sonnet-4")
-    email_classifier_model: str = Field(default="anthropic/claude-sonnet-4")
+    # LLM model selection. Previously hard-coded to anthropic/claude-sonnet-4, which OpenRouter
+    # has since retired (every request 404s). Now overridable per role via env vars, and
+    # background summarization/classification default to a small, cheap model.
+    interaction_agent_model: str = Field(default=os.getenv("OPENPOKE_INTERACTION_MODEL", "anthropic/claude-sonnet-5.5"))
+    execution_agent_model: str = Field(default=os.getenv("OPENPOKE_EXECUTION_MODEL", "anthropic/claude-sonnet-5.5"))
+    execution_agent_search_model: str = Field(default=os.getenv("OPENPOKE_SEARCH_MODEL", "anthropic/claude-sonnet-5.5"))
+    summarizer_model: str = Field(default=os.getenv("OPENPOKE_SUMMARIZER_MODEL", "anthropic/claude-haiku-5.5"))
+    email_classifier_model: str = Field(default=os.getenv("OPENPOKE_CLASSIFIER_MODEL", "anthropic/claude-haiku-5.5"))
 
     # Credentials / integrations
     openrouter_api_key: Optional[str] = Field(default=os.getenv("OPENROUTER_API_KEY"))
@@ -66,6 +68,16 @@ class Settings(BaseModel):
     cors_allow_origins_raw: str = Field(default=os.getenv("OPENPOKE_CORS_ALLOW_ORIGINS", "*"))
     enable_docs: bool = Field(default=os.getenv("OPENPOKE_ENABLE_DOCS", "1") != "0")
     docs_url: Optional[str] = Field(default=os.getenv("OPENPOKE_DOCS_URL", "/docs"))
+
+    # LLM request limits
+    llm_max_output_tokens: int = Field(default=_env_int("OPENPOKE_MAX_OUTPUT_TOKENS", 4096))
+    llm_max_concurrency: int = Field(default=_env_int("OPENPOKE_LLM_MAX_CONCURRENCY", 8))
+    llm_timeout_seconds: float = Field(default=float(_env_int("OPENPOKE_LLM_TIMEOUT", 60)))
+
+    # Agent-overload controls (see DESIGN.md)
+    agent_roster_prompt_limit: int = Field(default=_env_int("OPENPOKE_AGENT_ROSTER_LIMIT", 20))
+    execution_history_window_runs: int = Field(default=_env_int("OPENPOKE_AGENT_HISTORY_WINDOW", 5))
+    execution_history_compaction_batch: int = Field(default=_env_int("OPENPOKE_AGENT_COMPACTION_BATCH", 5))
 
     # Summarisation controls
     conversation_summary_threshold: int = Field(default=100)

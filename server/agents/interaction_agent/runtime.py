@@ -1,6 +1,8 @@
 """Interaction Agent Runtime - handles LLM calls for user and agent turns."""
 
+import asyncio
 import json
+import weakref
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Set
 
@@ -41,6 +43,23 @@ class _LoopSummary:
     execution_agents: Set[str] = field(default_factory=set)
 
 
+# The interaction agent is triggered from four places (user messages, execution-batch
+# results, trigger results, the important-email watcher). Each turn reads the transcript,
+# calls the LLM and appends replies. Run concurrently, turns raced: two turns could read
+# the same transcript and both answer, or miss each other's replies. Turns now run one at
+# a time per event loop, in arrival order (asyncio.Lock is FIFO).
+_turn_locks: "weakref.WeakKeyDictionary[asyncio.AbstractEventLoop, asyncio.Lock]" = weakref.WeakKeyDictionary()
+
+
+def _turn_lock() -> asyncio.Lock:
+    loop = asyncio.get_running_loop()
+    lock = _turn_locks.get(loop)
+    if lock is None:
+        lock = asyncio.Lock()
+        _turn_locks[loop] = lock
+    return lock
+
+
 class InteractionAgentRuntime:
     """Manages the interaction agent's request processing."""
 
@@ -65,6 +84,10 @@ class InteractionAgentRuntime:
     async def execute(self, user_message: str) -> InteractionResult:
         """Handle a user-authored message."""
 
+        async with _turn_lock():
+            return await self._execute_user_turn(user_message)
+
+    async def _execute_user_turn(self, user_message: str) -> InteractionResult:
         try:
             transcript_before = self._load_conversation_transcript()
             self.conversation_log.record_user_message(user_message)
@@ -100,6 +123,10 @@ class InteractionAgentRuntime:
     async def handle_agent_message(self, agent_message: str) -> InteractionResult:
         """Process a status update emitted by an execution agent."""
 
+        async with _turn_lock():
+            return await self._execute_agent_turn(agent_message)
+
+    async def _execute_agent_turn(self, agent_message: str) -> InteractionResult:
         try:
             transcript_before = self._load_conversation_transcript()
             self.conversation_log.record_agent_message(agent_message)

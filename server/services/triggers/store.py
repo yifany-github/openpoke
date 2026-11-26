@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from ...logging_config import logger
+from ..execution.roster import agent_key
 from .models import TriggerRecord
 from .utils import to_storage_timestamp, utc_now
 
@@ -31,6 +32,9 @@ class TriggerStore:
     def _connect(self) -> sqlite3.Connection:
         conn = sqlite3.connect(self._db_path, timeout=30, isolation_level=None)
         conn.row_factory = sqlite3.Row
+        # Agent identity is the normalized key, not the raw spelling: "Email to Alice" and
+        # "email-to-alice" are the same agent (same log file, same roster entry).
+        conn.create_function("agent_key", 1, agent_key, deterministic=True)
         return conn
 
     def _ensure_schema(self) -> None:
@@ -70,7 +74,7 @@ class TriggerStore:
     def fetch_one(self, trigger_id: int, agent_name: str) -> Optional[TriggerRecord]:
         with self._lock, self._connect() as conn:
             row = conn.execute(
-                "SELECT * FROM triggers WHERE id = ? AND agent_name = ?",
+                "SELECT * FROM triggers WHERE id = ? AND agent_key(agent_name) = agent_key(?)",
                 (trigger_id, agent_name),
             ).fetchone()
         return self._row_to_record(row) if row else None
@@ -81,7 +85,7 @@ class TriggerStore:
         assignments = ", ".join(f"{key} = :{key}" for key in fields.keys())
         sql = (
             f"UPDATE triggers SET {assignments}, updated_at = :updated_at"
-            " WHERE id = :trigger_id AND agent_name = :agent_name"
+            " WHERE id = :trigger_id AND agent_key(agent_name) = agent_key(:agent_name)"
         )
         payload = {
             **fields,
@@ -96,7 +100,7 @@ class TriggerStore:
     def list_for_agent(self, agent_name: str) -> List[TriggerRecord]:
         with self._lock, self._connect() as conn:
             rows = conn.execute(
-                "SELECT * FROM triggers WHERE agent_name = ? ORDER BY next_trigger IS NULL, next_trigger",
+                "SELECT * FROM triggers WHERE agent_key(agent_name) = agent_key(?) ORDER BY next_trigger IS NULL, next_trigger",
                 (agent_name,),
             ).fetchall()
         return [self._row_to_record(row) for row in rows]
@@ -110,12 +114,19 @@ class TriggerStore:
         )
         params: List[Any] = [before_iso]
         if agent_name:
-            sql += " AND agent_name = ?"
+            sql += " AND agent_key(agent_name) = agent_key(?)"
             params.append(agent_name)
         sql += " ORDER BY next_trigger, id"
         with self._lock, self._connect() as conn:
             rows = conn.execute(sql, params).fetchall()
         return [self._row_to_record(row) for row in rows]
+
+    def agents_with_active_triggers(self) -> List[str]:
+        with self._lock, self._connect() as conn:
+            rows = conn.execute(
+                "SELECT DISTINCT agent_name FROM triggers WHERE status = 'active'"
+            ).fetchall()
+        return [row["agent_name"] for row in rows]
 
     def clear_all(self) -> None:
         with self._lock, self._connect() as conn:

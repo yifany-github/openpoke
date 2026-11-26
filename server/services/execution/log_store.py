@@ -6,10 +6,11 @@ import re
 import threading
 from html import escape, unescape
 from pathlib import Path
-from typing import Dict, Iterator, List, Tuple
+from typing import Dict, Iterator, List, Optional, Tuple
 
 from ...logging_config import logger
 from ...utils.timezones import now_in_user_timezone
+from .roster import agent_key
 
 
 _DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data"
@@ -17,11 +18,8 @@ _EXECUTION_LOG_DIR = _DATA_DIR / "execution_agents"
 
 
 def _slugify(name: str) -> str:
-    """Convert agent name to filesystem-safe slug."""
-    slug = "".join(ch.lower() if ch.isalnum() else "-" for ch in name.strip()).strip("-")
-    while "--" in slug:
-        slug = slug.replace("--", "-")
-    return slug or "agent"
+    """Convert agent name to filesystem-safe slug (same as the roster's identity key)."""
+    return agent_key(name)
 
 
 def _encode_payload(payload: str) -> str:
@@ -142,16 +140,21 @@ class ExecutionAgentLogStore:
             if parsed is not None:
                 yield parsed
 
-    def load_transcript(self, agent_name: str) -> str:
-        """Load the full transcript for inclusion in system prompt."""
+    @staticmethod
+    def render_entries(entries: List[Tuple[str, str, str]]) -> str:
+        """Render parsed entries back into the XML-style transcript format."""
         parts: List[str] = []
-        for tag, timestamp, payload in self.iter_entries(agent_name):
+        for tag, timestamp, payload in entries:
             escaped = escape(payload, quote=False)
             if timestamp:
                 parts.append(f"<{tag} timestamp=\"{timestamp}\">{escaped}</{tag}>")
             else:
                 parts.append(f"<{tag}>{escaped}</{tag}>")
         return "\n".join(parts)
+
+    def load_transcript(self, agent_name: str) -> str:
+        """Load the full, unbounded transcript (debugging/export; prompts use agent_memory)."""
+        return self.render_entries(list(self.iter_entries(agent_name)))
 
     def load_recent(self, agent_name: str, limit: int = 10) -> list[tuple[str, str, str]]:
         """Load recent log entries."""
