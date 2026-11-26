@@ -31,11 +31,23 @@ directions:
 | Execution prompt after 200 reuses of one agent | 186,587 tok | **≤ 11,372 tok** |
 | Facts from compacted runs still answerable (8 questions, real summarizer) | 8/8 (full log) | **8/8** with half the tokens |
 
-Ablations on the dev workload (EVALUATION.md §4) show where the gain comes from:
-- **The accuracy comes from descriptions and recency.** Listing all 300 agents with
-  descriptions routes about as well as the top-20.
-- **Top-K is what keeps it affordable.** Listing all agents with descriptions costs ~37k
-  tokens per request, 4.5× more.
+Ablations on the same 40 queries (EVALUATION.md §4.2) show where the gain comes from:
+
+| Router sees | Correct | Prompt tokens per request |
+|---|---|---|
+| names only (original) | 20/40 | 9,749 |
+| **all** 300 agents, with descriptions and recency | 35/40 | 30,697 |
+| top-20, with heuristic descriptions | 34/40 | 8,406 |
+| **top-20, with LLM descriptions (this fork)** | **35/40** | **8,149** |
+
+- **The accuracy comes from giving the router metadata**: a description and when the agent
+  was last used. Every variant with metadata beats names-only (p ≤ 0.001).
+- **Top-K is what keeps it affordable at no accuracy cost.** It matches the full roster
+  exactly (paired 1 vs 1) at 1/3.8 of the tokens, and that ratio grows with the number of
+  agents.
+- **Description quality mattered less than I expected.** Heuristic descriptions score 34/40
+  against 35/40 (n.s.). An earlier dev-workload ablation suggested a large gap; the
+  independent workload didn't confirm it.
 
 The main caveats (EVALUATION.md §6):
 - single run per condition;
@@ -72,10 +84,11 @@ Measured on the original code (`evals/prompt_growth.py`):
   for logs, memory and triggers), a `description`, `created_at`, `last_used_at` and
   `run_count`. Writes are locked read-modify-write with atomic replace. The legacy list
   format migrates on load.
-- **Descriptions** (`agent_memory.describe`). After an agent's first run, one small-model
-  call (Haiku) writes one line covering the people, organisation, email and topic. Later
-  compactions refresh it. Until it lands, a heuristic stands in: "Started for: <first
-  instruction> | Latest: <result>".
+- **Descriptions.** The heuristic "Started for: <first instruction> | Latest: <result>" is
+  written immediately. After the first run, one small-model call (`agent_memory.describe`,
+  Haiku) replaces it with one line covering the people, organisation, email and topic.
+  Compactions refresh it later. The LLM description's measured benefit over the heuristic is
+  small (35 vs 34 of 40); it costs one cheap call per agent.
 - **What the router sees** (`agent_ranker.py`):
   - pinned agents first: those with an active trigger, or named in the current turn;
   - then the top-K by `0.7·BM25(name×2 + description) + 0.3·recency` (3-day half-life).
