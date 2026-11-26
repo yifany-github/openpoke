@@ -141,7 +141,7 @@ they own. Explain `<active_agents>`, `<more_agents>`, `search_agents` and
 
 ```bash
 python3.11 -m venv .venv && .venv/bin/pip install -r server/requirements.txt pytest tiktoken
-.venv/bin/python -m pytest                       # 49 unit/integration tests
+.venv/bin/python -m pytest                       # 53 unit/integration tests
 .venv/bin/python -m evals.prompt_growth          # width/depth token curves (after)
 .venv/bin/python -m evals.routing_offline        # routing recall, K sweep, ablations, dedupe
 OPENROUTER_API_KEY=… .venv/bin/python -m evals.routing_llm --n 30 --yes --seed 11 --delay 2   # live LLM routing (~$0.5)
@@ -155,7 +155,7 @@ git worktree add ../openpoke-main main
 cd ../openpoke-main && PYTHONPATH=. ../openpoke/.venv/bin/python ../openpoke/evals/prompt_growth.py --label baseline
 ```
 
-### Tests (`tests/`, 49 tests, no network)
+### Tests (`tests/`, 53 tests, no network)
 
 All stores (roster, logs, memory, triggers) are redirected to `tmp_path`, and the LLM is
 stubbed.
@@ -172,8 +172,9 @@ stubbed.
   `ExecutionAgentRuntime` run with a stubbed LLM.
 - `test_runtime_concurrency.py`: an end-to-end interaction turn where the scripted LLM invents
   a near-duplicate name, gets `similar_agents_exist`, and reuses the existing agent;
-  interaction turns serialized; same-agent runs serialized with contiguous logs; triggers
-  using the shared batch manager.
+  interaction turns serialized and time-limited; same-agent runs serialized with contiguous
+  logs; trigger runs in their own batch; `wait` ending a turn only when it's the whole
+  response.
 - `test_llm_client.py`: `max_tokens` always sent; 429/503 retried; 402 not retried;
   concurrency capped (via `httpx.MockTransport`).
 
@@ -188,6 +189,33 @@ removed, they fail.
 
 That run is what surfaced the `wait` and logging bugs in §5. After the fix, the replay logged
 zero errors.
+
+A second live run covered three more paths, all passing with zero errors:
+- a trigger firing on schedule (scheduler → execution agent → result delivered to the user);
+- two messages sent at the same instant (serialized turns, both answered correctly);
+- `DELETE /chat/history` (logs, memory, roster and triggers all cleared).
+
+**Other checks.**
+- The suite passes on Python 3.10 and 3.11, from a fresh clone of the fork.
+- The offline evals reproduce byte-for-byte from a fresh clone.
+- Every number in this document was cross-checked against `evals/results/`.
+
+**Independent review.** A separate reviewer was given only the diff, not this write-up. It
+found five real issues, all now fixed, each with a test that fails without the fix:
+1. A compaction finishing after a history clear could resurrect old memory. The save now
+   checks that the log is still the same one.
+2. Sharing one batch manager between triggers and user dispatches, which I had done to "fix"
+   the per-trigger managers, made user results wait on trigger runs. **Reverted:** a
+   separate batch per trigger is the right design.
+3. The new turn lock had no timeout. A turn timeout was added.
+4. `wait` in the same response as a rejected dispatch dropped the rejection. The turn now
+   ends only when the response is `wait` alone.
+5. An unreadable roster was silently replaced on the next write. It is now backed up.
+
+Minor fixes from the same review:
+- stale `Retry-After` reused after a network error;
+- a pending compaction task could be garbage-collected;
+- trigger runs didn't update the agent's `last_used`.
 
 ### Evaluators (`evals/`)
 
@@ -365,16 +393,15 @@ Fixed in this branch, each with tests:
 | **The app could not run at all.** Every model was hard-coded to `anthropic/claude-sonnet-4`, which OpenRouter has retired, so every request returned 404 | `config.py` | Models are configurable per role (`OPENPOKE_*_MODEL`). Defaults: Sonnet 5.5 for the agents, Haiku 5.5 for the summarizers and email classifier (about 20× cheaper for background work) |
 | **No `max_tokens`.** OpenRouter reserved the full 64k output budget on every call, so output cost was uncapped and requests failed with 402 on low-balance accounts | `openrouter_client/client.py` | `max_tokens` is always sent (`OPENPOKE_MAX_OUTPUT_TOKENS`, default 4096) |
 | **Unbounded parallel LLM calls, no retry.** Fan-out × tool loops × background summarizers could all fire at once, and a single 429 failed the whole task | `openrouter_client/client.py` | Per-loop semaphore (`OPENPOKE_LLM_MAX_CONCURRENCY`, default 8); retry 408/429/5xx/network errors with exponential backoff; 4xx errors are not retried |
-| **Interaction-agent turns race.** Four entry points (user message, batch result, trigger result, email watcher) each read the transcript, call the LLM and append, concurrently. Two turns could answer from the same stale transcript | `interaction_agent/runtime.py` | Turns are serialized (FIFO `asyncio.Lock`) |
+| **Interaction-agent turns race.** Four entry points (user message, batch result, trigger result, email watcher) each read the transcript, call the LLM and append, concurrently. Two turns could answer from the same stale transcript | `interaction_agent/runtime.py` | Turns are serialized (FIFO `asyncio.Lock`), each capped by a turn timeout (`OPENPOKE_TURN_TIMEOUT`, 180 s) so one stuck turn can't block the rest |
 | **Same agent run concurrently interleaves its log**, corrupting its history | `execution_agent/batch_manager.py` | Per-agent run lock; the request is logged inside it, so each run's entries are contiguous |
 | **Trigger-fired runs never logged their request**, so the agent's history showed actions with no instruction | `trigger_scheduler.py`, `batch_manager.py` | Same change: every run logs its request in the batch manager |
-| **Each trigger created its own `ExecutionBatchManager`**, bypassing batching | `trigger_scheduler.py` | One shared manager |
 | **Memory cross-talk from slug collisions.** Names differing only in case or punctuation were separate agents sharing one log file | `roster.py`, `log_store.py` | The registry key is the slug |
 | **Triggers keyed by raw spelling.** A trigger saved under "email-to-alice" was invisible to `listTriggers`/`updateTrigger` for "Email to Alice" | `triggers/store.py` | Queries compare `agent_key(agent_name)` via a SQLite UDF; one identity everywhere (roster, logs, memory, triggers) |
-| **Non-atomic, lossy roster writes.** The file was truncated (`open('w')`) *before* locking, and writers saved stale in-memory copies over each other | `roster.py` | Read-modify-write under a lock file; temp file + `os.replace` |
+| **Non-atomic, lossy roster writes.** The file was truncated (`open('w')`) *before* locking, and writers saved stale in-memory copies over each other | `roster.py` | Read-modify-write under a lock file; temp file + `os.replace`. An unreadable file is moved to `roster.json.corrupt-<ts>` instead of being overwritten |
 | **Leftover template text in the execution prompt** (`[TO BE FILLED IN BY USER …]`) sent on every call | `execution_agent/system_prompt.md` | Replaced with guidance on reading the memory summary |
 | **The prompt references a tool that doesn't exist** (`reacttomessage`) | `interaction_agent/system_prompt.md` | Removed |
-| **`wait` never ended the turn.** Found in a live end-to-end run: the model called `wait` repeatedly until the 8-iteration limit raised, so turns "failed" after burning extra LLM calls | `interaction_agent/runtime.py` | `wait` ends the turn |
+| **`wait` never ended the turn.** Found in a live end-to-end run: the model called `wait` repeatedly until the 8-iteration limit raised, so turns "failed" after burning extra LLM calls | `interaction_agent/runtime.py` | A response consisting only of `wait` ends the turn. If other calls come alongside it (for example a rejected dispatch), the model still sees their results |
 | **Error logs never said why.** Failures are logged as `logger.error(msg, extra={"error": …})`, but the formatter dropped `extra` fields | `logging_config.py` | Formatter appends `extra` fields |
 
 Found but not fixed here, with the proposed fix:
@@ -382,4 +409,6 @@ Found but not fixed here, with the proposed fix:
 | Problem | Where | Proposed fix |
 |---|---|---|
 | One global batch: a slow agent holds back every other agent's result (up to the 90 s timeout), and new dispatches join an old batch | `execution_agent/batch_manager.py` | Batch per interaction turn (pass the batch id from the dispatching turn); deliver each result as it lands, with a short debounce so near-simultaneous results still arrive together |
+| **An OpenRouter API key is in the public git history.** `b5695fa` (2025-09-17) committed a server access log whose request URLs carry `api_key=sk-or-v1-…` in the query string. `f715ae0` deleted the file, but every clone and fork still contains it | upstream history; the old HTTP server | Treat the key as compromised and revoke it. Purge it with `git filter-repo` if desired. Never accept credentials in query strings, since they end up in access logs. The current server reads the key from `.env` only, and upstream has since gitignored `*.log` (`6fa16ac`) |
+| **A timezone given in chat is ignored, so relative reminders can be hours off.** The user's timezone comes only from the browser. When an API client doesn't send one (or it's wrong) and the user says "I'm in New York" in chat, the model mixes the UTC clock with the stated local zone. In a live run, "remind me in 1 minute" was scheduled 5 hours late | `services/timezone_store.py`, execution prompt | Give the interaction agent a `set_timezone` tool that persists to the timezone store. Stamp the current time *with its zone* into execution instructions |
 | Tool results truncated to 500 chars in agent memory, which can cut off the very ids memory needs | `execution_agent/agent.py::record_tool_execution` | Extract ids (message, thread, draft) structurally before truncating |

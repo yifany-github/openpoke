@@ -73,6 +73,7 @@ class Settings(BaseModel):
     llm_max_output_tokens: int = Field(default=_env_int("OPENPOKE_MAX_OUTPUT_TOKENS", 4096))
     llm_max_concurrency: int = Field(default=_env_int("OPENPOKE_LLM_MAX_CONCURRENCY", 8))
     llm_timeout_seconds: float = Field(default=float(_env_int("OPENPOKE_LLM_TIMEOUT", 60)))
+    interaction_turn_timeout_seconds: float = Field(default=float(_env_int("OPENPOKE_TURN_TIMEOUT", 180)))
 
     # Agent-overload controls (see DESIGN.md)
     agent_roster_prompt_limit: int = Field(default=_env_int("OPENPOKE_AGENT_ROSTER_LIMIT", 20))

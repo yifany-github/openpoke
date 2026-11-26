@@ -10,37 +10,37 @@
       "agents": 0,
       "roster_tokens": 1,
       "agents_listed": 0,
-      "system_prompt_tokens": 2296
+      "system_prompt_tokens": 2440
     },
     {
       "agents": 10,
       "roster_tokens": 435,
       "agents_listed": 10,
-      "system_prompt_tokens": 2296
+      "system_prompt_tokens": 2440
     },
     {
       "agents": 50,
       "roster_tokens": 907,
       "agents_listed": 20,
-      "system_prompt_tokens": 2296
+      "system_prompt_tokens": 2440
     },
     {
       "agents": 100,
       "roster_tokens": 923,
       "agents_listed": 20,
-      "system_prompt_tokens": 2296
+      "system_prompt_tokens": 2440
     },
     {
       "agents": 300,
       "roster_tokens": 928,
       "agents_listed": 20,
-      "system_prompt_tokens": 2296
+      "system_prompt_tokens": 2440
     },
     {
       "agents": 1000,
       "roster_tokens": 942,
       "agents_listed": 20,
-      "system_prompt_tokens": 2296
+      "system_prompt_tokens": 2440
     }
   ],
   "depth": [

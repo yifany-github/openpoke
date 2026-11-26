@@ -123,6 +123,7 @@ async def request_chat_completion(
             except httpx.HTTPError as exc:
                 # str(ReadTimeout) is often empty; keep the exception type in the message.
                 last_error = OpenRouterError(f"OpenRouter request failed: {type(exc).__name__}: {exc}")
+                retry_after = None
                 continue
 
         if response.status_code < 400:

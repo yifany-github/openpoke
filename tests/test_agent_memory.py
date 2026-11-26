@@ -155,3 +155,19 @@ def test_runtime_records_run_refreshes_description_and_schedules_compaction(stor
     assert needs_compaction(AGENT)
     desc = stores.roster.get(AGENT).description
     assert desc.startswith("Started for: invite Alice to lunch | Latest: Confirmed lunch with Alice")
+
+
+def test_compaction_discards_summary_if_history_was_cleared_meanwhile(stores, settings):
+    """Clearing history while the summarizer is running must not resurrect old memory."""
+    add_runs(stores, 6)
+
+    async def summarizer_during_which_history_is_cleared(system_prompt, content):
+        stores.logs.clear_all()
+        stores.memory.clear_all()
+        add_runs(stores, 2)  # a brand-new agent with the same name starts working
+        return "DESCRIPTION: stale\nMEMORY:\n- old facts"
+
+    assert asyncio.run(compact(AGENT, summarizer_during_which_history_is_cleared)) is False
+    assert stores.memory.load(AGENT).covered_runs == 0
+    history = render_history(AGENT)
+    assert "old facts" not in history and history.count("<agent_request") == 2
