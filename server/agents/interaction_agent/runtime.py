@@ -209,6 +209,12 @@ class InteractionAgentRuntime:
                     "content": self._format_tool_result(tool_call, result),
                 }
                 messages.append(tool_message)
+
+            # `wait` means "nothing more to say this turn". The loop used to keep going, and
+            # models would call wait again and again until the iteration limit raised, so
+            # turns failed after burning up to 8 LLM calls.
+            if any(call.name == "wait" for call in parsed_tool_calls):
+                break
         else:
             raise RuntimeError("Reached tool iteration limit without final response")
 

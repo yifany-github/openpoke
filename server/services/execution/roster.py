@@ -178,6 +178,7 @@ class AgentRoster:
         fd, tmp = tempfile.mkstemp(dir=self._roster_path.parent, prefix=".roster.")
         with os.fdopen(fd, "w", encoding="utf-8") as handle:
             json.dump(payload, handle, indent=2)
+        os.chmod(tmp, 0o644)  # mkstemp creates 0600; keep the permissions a plain open() gave
         os.replace(tmp, self._roster_path)
 
     def save(self) -> None:

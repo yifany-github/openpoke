@@ -23,7 +23,7 @@ that made the app unusable.
 - **Run the tests and evaluators:**
   ```bash
   python3.11 -m venv .venv && .venv/bin/pip install -r server/requirements.txt pytest tiktoken
-  .venv/bin/python -m pytest                      # 45 tests, no network
+  .venv/bin/python -m pytest                      # 49 tests, no network
   .venv/bin/python -m evals.prompt_growth         # prompt size vs. #agents and #reuses
   .venv/bin/python -m evals.routing_offline       # routing recall, K sweep, ablations, dedupe
   .venv/bin/python -m evals.routing_llm --n 30 --yes   # live LLM routing (needs OPENROUTER_API_KEY)

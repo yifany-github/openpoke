@@ -166,3 +166,20 @@ def test_triggers_use_the_shared_batch_manager(stores, monkeypatch):
     asyncio.run(scheduler._execute_trigger(trigger))
 
     assert calls == ["Weekly digest"]
+
+
+# ----------------------------------------------------------------------------- wait ends the turn
+
+def test_wait_ends_the_turn_instead_of_looping_to_the_limit(interaction, monkeypatch):
+    """Found in a live run: the model kept calling `wait` until the 8-iteration limit raised."""
+    calls = []
+
+    async def waiting_llm(*, messages, **kwargs):
+        calls.append(1)
+        return llm_reply(tool_call("wait", reason="Already told the user"))
+
+    monkeypatch.setattr(ia_runtime, "request_chat_completion", waiting_llm)
+    result = asyncio.run(interaction().handle_agent_message("[SUCCESS] Call mom reminder: done"))
+
+    assert result.success
+    assert len(calls) == 1
