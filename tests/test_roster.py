@@ -100,3 +100,14 @@ def test_concurrent_writers_do_not_lose_updates(tmp_path):
     fresh = AgentRoster(path)
     assert fresh.get_agents() == ["Email to Alice", "Flight to Tokyo"]
     assert fresh.get("Email to Alice").run_count == 2
+
+
+def test_corrupt_roster_is_backed_up_not_overwritten(tmp_path):
+    path = tmp_path / "roster.json"
+    path.write_text('{"version": 2, "agents": [{"name": "Email to Ali')  # truncated write
+    roster = AgentRoster(path)
+    roster.add_agent("Flight to Tokyo")
+
+    backups = list(tmp_path.glob("roster.json.corrupt-*"))
+    assert len(backups) == 1 and "Email to Ali" in backups[0].read_text()
+    assert AgentRoster(path).get_agents() == ["Flight to Tokyo"]

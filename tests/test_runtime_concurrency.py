@@ -146,11 +146,10 @@ def test_same_agent_runs_are_serialized_and_logged_contiguously(stores, settings
     assert runs[1][0][2] == "two" and runs[1][2][2] == "done two"
 
 
-# ----------------------------------------------------------------------------- C3
+# ----------------------------------------------------------------------------- triggers
 
-def test_triggers_use_the_shared_batch_manager(stores, monkeypatch):
-    assert tools._EXECUTION_BATCH_MANAGER is bm.get_execution_batch_manager()
-
+def test_trigger_runs_use_their_own_batch_and_update_the_registry(stores, monkeypatch):
+    """Trigger results must not wait on (or delay) the interaction agent's batch."""
     calls = []
 
     class FakeManager:
@@ -158,14 +157,15 @@ def test_triggers_use_the_shared_batch_manager(stores, monkeypatch):
             calls.append(agent_name)
             return ExecutionResult(agent_name=agent_name, success=True, response="ok")
 
-    monkeypatch.setattr(ts, "get_execution_batch_manager", lambda: FakeManager())
+    monkeypatch.setattr(ts, "ExecutionBatchManager", FakeManager)
     monkeypatch.setattr(ts, "get_trigger_service", lambda: stores.triggers)
+    stores.roster.add_agent("Weekly digest")
     trigger = stores.triggers.create_trigger(agent_name="Weekly digest", payload="Summarize newsletters",
                                              start_time="2026-11-23T09:00:00")
-    scheduler = ts.TriggerScheduler()
-    asyncio.run(scheduler._execute_trigger(trigger))
+    asyncio.run(ts.TriggerScheduler()._execute_trigger(trigger))
 
     assert calls == ["Weekly digest"]
+    assert stores.roster.get("Weekly digest").run_count == 1  # trigger runs count as use
 
 
 # ----------------------------------------------------------------------------- wait ends the turn
@@ -183,3 +183,53 @@ def test_wait_ends_the_turn_instead_of_looping_to_the_limit(interaction, monkeyp
 
     assert result.success
     assert len(calls) == 1
+
+
+def test_wait_alongside_a_rejected_call_does_not_end_the_turn(interaction, stores, monkeypatch):
+    """If the same response also contains a call the model must react to, keep looping."""
+    stores.roster.add_agent("Email to Alice")
+    seen = []
+
+    async def llm(*, messages, **kwargs):
+        last = messages[-1]
+        if last["role"] == "user":
+            return llm_reply(tool_call("send_message_to_agent", agent_name="Reply to Alice re lunch",
+                                       instructions="say yes"),
+                             tool_call("wait", reason="nothing else to say"))
+        seen.append([json.loads(m["content"])["tool"] for m in messages if m["role"] == "tool"])
+        if len(seen) == 1:  # saw the rejection -> reuse the existing agent
+            return llm_reply(tool_call("send_message_to_agent", agent_name="Email to Alice", instructions="say yes"))
+        return llm_reply(content="")  # done
+
+    monkeypatch.setattr(ia_runtime, "request_chat_completion", llm)
+
+    async def run():
+        await interaction().execute("tell alice yes")
+        await asyncio.sleep(0)
+
+    asyncio.run(run())
+    assert seen, "model never got to see the rejection"
+    assert interaction.dispatched == [("Email to Alice", "say yes")]
+
+
+def test_a_stuck_turn_times_out_and_does_not_block_the_next(interaction, settings, monkeypatch):
+    monkeypatch.setattr(settings, "interaction_turn_timeout_seconds", 0.05)
+    hang = {"first": True}
+
+    async def llm(*, messages, **kwargs):
+        if hang["first"]:
+            hang["first"] = False
+            await asyncio.sleep(10)  # e.g. OpenRouter slowdown + retries
+        if messages[-1]["role"] == "user":
+            return llm_reply(tool_call("send_message_to_user", message="hi"))
+        return llm_reply(content="")
+
+    monkeypatch.setattr(ia_runtime, "request_chat_completion", llm)
+
+    async def run():
+        rt = interaction()
+        return await asyncio.wait_for(asyncio.gather(rt.execute("one"), rt.execute("two")), timeout=2)
+
+    first, second = asyncio.run(run())
+    assert not first.success and "timed out" in first.error
+    assert second.success

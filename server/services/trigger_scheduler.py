@@ -6,7 +6,8 @@ import asyncio
 from datetime import datetime, timezone
 from typing import Optional, Set
 
-from ..agents.execution_agent.batch_manager import get_execution_batch_manager
+from ..agents.execution_agent.batch_manager import ExecutionBatchManager
+from .execution.roster import get_agent_roster
 from ..agents.execution_agent.runtime import ExecutionResult
 from ..logging_config import logger
 from .triggers import TriggerRecord, get_trigger_service
@@ -89,7 +90,11 @@ class TriggerScheduler:
                     "scheduled_for": trigger.next_trigger,
                 },
             )
-            execution_manager = get_execution_batch_manager()
+            # Deliberately a separate manager per trigger: a batch is only delivered when
+            # every run in it finishes, so sharing the interaction agent's batch would make
+            # user-requested results wait on (possibly slow, recurring) trigger runs.
+            execution_manager = ExecutionBatchManager()
+            get_agent_roster().touch(trigger.agent_name)
             result = await execution_manager.execute_agent(
                 trigger.agent_name,
                 instructions,

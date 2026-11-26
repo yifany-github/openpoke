@@ -123,8 +123,17 @@ class AgentRoster:
         try:
             data = json.loads(self._roster_path.read_text(encoding="utf-8") or "[]")
         except Exception as exc:
-            logger.warning(f"Failed to load roster.json: {exc}")
-            return [], False
+            # Don't let the next write silently replace an unreadable file with a
+            # one-agent roster: move it aside so it can be recovered by hand.
+            backup = self._roster_path.with_name(
+                f"{self._roster_path.name}.corrupt-{datetime.now(timezone.utc):%Y%m%dT%H%M%S}"
+            )
+            try:
+                os.replace(self._roster_path, backup)
+                logger.error(f"roster.json unreadable ({exc}); moved to {backup.name}")
+            except OSError as move_exc:  # pragma: no cover - defensive
+                logger.error(f"roster.json unreadable ({exc}); could not back it up: {move_exc}")
+            return [], True
 
         if isinstance(data, list):  # legacy v1: ["name", ...]
             migrated: List[AgentRecord] = []

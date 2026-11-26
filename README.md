@@ -23,7 +23,7 @@ that made the app unusable.
 - **Run the tests and evaluators:**
   ```bash
   python3.11 -m venv .venv && .venv/bin/pip install -r server/requirements.txt pytest tiktoken
-  .venv/bin/python -m pytest                      # 49 tests, no network
+  .venv/bin/python -m pytest                      # 53 tests, no network
   .venv/bin/python -m evals.prompt_growth         # prompt size vs. #agents and #reuses
   .venv/bin/python -m evals.routing_offline       # routing recall, K sweep, ablations, dedupe
   .venv/bin/python -m evals.routing_llm --n 30 --yes   # live LLM routing (needs OPENROUTER_API_KEY)
@@ -31,7 +31,7 @@ that made the app unusable.
 - **New settings** (all optional): `OPENPOKE_{INTERACTION,EXECUTION,SEARCH,SUMMARIZER,CLASSIFIER}_MODEL`,
   `OPENPOKE_AGENT_ROSTER_LIMIT` (20), `OPENPOKE_AGENT_HISTORY_WINDOW` (5),
   `OPENPOKE_AGENT_COMPACTION_BATCH` (5), `OPENPOKE_MAX_OUTPUT_TOKENS` (4096),
-  `OPENPOKE_LLM_MAX_CONCURRENCY` (8).
+  `OPENPOKE_LLM_MAX_CONCURRENCY` (8), `OPENPOKE_LLM_TIMEOUT` (60 s), `OPENPOKE_TURN_TIMEOUT` (180 s).
 
 ## Requirements
 - Python 3.10+

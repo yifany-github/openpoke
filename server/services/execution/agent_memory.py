@@ -212,9 +212,18 @@ async def compact(agent_name: str, summarizer: Optional[Summarizer] = None) -> b
 
     target = len(runs) - window
     to_fold = runs[state.covered_runs:target]
+    fingerprint = runs[0][0]  # first entry of the log: (tag, timestamp, payload)
     prompt = build_compaction_prompt(agent_name, state.summary, to_fold)
     text = await (summarizer or _openrouter_summarizer)(_SUMMARY_SYSTEM_PROMPT, prompt)
     description, summary = parse_summary(text)
+
+    # The LLM call can take minutes. If history was cleared (DELETE /chat/history) or the
+    # log otherwise replaced meanwhile, saving would resurrect the old summary and mark
+    # new runs as already covered. Only save if the log still starts the same way.
+    current = split_runs(list(get_execution_agent_logs().iter_entries(agent_name)))
+    if not current or current[0][0] != fingerprint or len(current) < target:
+        logger.warning(f"[{agent_name}] log changed during compaction; discarding stale summary")
+        return False
 
     memory.save(
         agent_name,
@@ -227,6 +236,7 @@ async def compact(agent_name: str, summarizer: Optional[Summarizer] = None) -> b
 
 
 _in_flight: set[str] = set()
+_tasks: set[asyncio.Task] = set()  # strong refs so pending compactions aren't garbage-collected
 
 
 def schedule_compaction(agent_name: str, summarizer: Optional[Summarizer] = None) -> Optional[asyncio.Task]:
@@ -249,7 +259,10 @@ def schedule_compaction(agent_name: str, summarizer: Optional[Summarizer] = None
             _in_flight.discard(key)
 
     _in_flight.add(key)
-    return loop.create_task(_run())
+    task = loop.create_task(_run())
+    _tasks.add(task)
+    task.add_done_callback(_tasks.discard)
+    return task
 
 
 def refresh_description(agent_name: str, latest_response: str) -> None:

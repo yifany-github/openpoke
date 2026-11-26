@@ -85,7 +85,7 @@ class InteractionAgentRuntime:
         """Handle a user-authored message."""
 
         async with _turn_lock():
-            return await self._execute_user_turn(user_message)
+            return await self._bounded(self._execute_user_turn(user_message))
 
     async def _execute_user_turn(self, user_message: str) -> InteractionResult:
         try:
@@ -124,7 +124,17 @@ class InteractionAgentRuntime:
         """Process a status update emitted by an execution agent."""
 
         async with _turn_lock():
-            return await self._execute_agent_turn(agent_message)
+            return await self._bounded(self._execute_agent_turn(agent_message))
+
+    async def _bounded(self, turn) -> InteractionResult:
+        """Turns are serialized, so one stuck turn (slow LLM + retries) would block every
+        later one. Cap each turn's duration."""
+        timeout = self.settings.interaction_turn_timeout_seconds
+        try:
+            return await asyncio.wait_for(turn, timeout=timeout)
+        except asyncio.TimeoutError:
+            logger.error("Interaction turn timed out", extra={"timeout_seconds": timeout})
+            return InteractionResult(success=False, response="", error=f"turn timed out after {timeout}s")
 
     async def _execute_agent_turn(self, agent_message: str) -> InteractionResult:
         try:
@@ -212,8 +222,10 @@ class InteractionAgentRuntime:
 
             # `wait` means "nothing more to say this turn". The loop used to keep going, and
             # models would call wait again and again until the iteration limit raised, so
-            # turns failed after burning up to 8 LLM calls.
-            if any(call.name == "wait" for call in parsed_tool_calls):
+            # turns failed after burning up to 8 LLM calls. Only end the turn when the whole
+            # response is `wait`: if another call in it was rejected or returned search
+            # results, the model must see them.
+            if all(call.name == "wait" for call in parsed_tool_calls):
                 break
         else:
             raise RuntimeError("Reached tool iteration limit without final response")
