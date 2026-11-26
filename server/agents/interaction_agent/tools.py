@@ -10,6 +10,7 @@ from ...services.conversation import get_conversation_log
 from ...services.execution import get_agent_roster
 from ...services.execution.agent_ranker import search_agents as rank_search_agents
 from ...services.execution.roster import AgentRecord
+from ...services.timezone_store import get_timezone_store
 from ..execution_agent.batch_manager import get_execution_batch_manager
 
 
@@ -43,6 +44,21 @@ TOOL_SCHEMAS = [
                     },
                 },
                 "required": ["agent_name", "instructions"],
+                "additionalProperties": False,
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "set_timezone",
+            "description": "Save the user's timezone when they tell you where they are or what timezone they're in. Reminders and schedules use it.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "timezone": {"type": "string", "description": "IANA timezone name, e.g. 'America/New_York', 'Europe/Berlin', 'Asia/Shanghai'."},
+                },
+                "required": ["timezone"],
                 "additionalProperties": False,
             },
         },
@@ -262,6 +278,15 @@ def send_draft(
     )
 
 
+# Persist the user's timezone (previously only the browser could set it)
+def set_timezone(timezone: str) -> ToolResult:
+    try:
+        get_timezone_store().set_timezone(timezone)
+    except ValueError as exc:
+        return ToolResult(success=False, payload={"error": str(exc), "hint": "Use an IANA name like 'America/New_York'."})
+    return ToolResult(success=True, payload={"timezone": timezone, "status": "saved"})
+
+
 # Record silent wait state to avoid duplicate responses
 def wait(reason: str) -> ToolResult:
     """Wait silently and add a wait log entry that is not visible to the user."""
@@ -306,6 +331,8 @@ def handle_tool_call(name: str, arguments: Any) -> ToolResult:
             return search_agents(**args)
         if name == "send_draft":
             return send_draft(**args)
+        if name == "set_timezone":
+            return set_timezone(**args)
         if name == "wait":
             return wait(**args)
 

@@ -7,7 +7,7 @@ The summary is in [DESIGN.md](DESIGN.md). Raw outputs are in `evals/results/`.
 
 ```bash
 python3.11 -m venv .venv && .venv/bin/pip install -r server/requirements.txt pytest tiktoken
-.venv/bin/python -m pytest                                  # 62 tests, network blocked
+.venv/bin/python -m pytest                                  # 67 tests, network blocked
 .venv/bin/python -m evals.prompt_growth                     # §2
 .venv/bin/python -m evals.routing_offline [--vocab fresh]   # §3
 # live (needs OPENROUTER_API_KEY), §4–5:
@@ -35,9 +35,14 @@ Drives the real prompt builders on both checkouts.
 
 | Reuses of one agent | Before | After, no LLM (fallback) | After, with compaction (peak) |
 |---|---|---|---|
-| 10 | 10,077 | 10,117 | 10,117 |
-| 50 | 47,237 | 10,130 | 11,372 |
-| 200 | 186,587 | 10,130 | 11,372 |
+| 10 | 10,077 | 13,462 | 13,462 |
+| 50 | 47,237 | 13,475 | 14,717 |
+| 200 | 186,587 | 13,475 | 14,717 |
+
+The "after" logs are about 35% larger per run than "before". This simulation's tool results
+are full of ids, and the fork now keeps the ids that used to be cut off at the 500-char
+truncation (OTHER_FINDINGS #17). The prompt also states the current time and timezone (#16).
+Both cost a fixed amount per run, and the bound still holds.
 
 Two things to read from these tables:
 - **The depth bound holds by construction.** A real summarizer passes the stub summary in
@@ -244,6 +249,9 @@ independent workload.
 | Full log (original behaviour) | 8/8 | 3,682 |
 | Bounded: summary + last 5 runs | **8/8** | **1,847** |
 
+This was run before the prompt gained its ~35-token current-time line. The tool results in
+this scenario are under 500 chars, so id-preserving truncation doesn't apply.
+
 The summary kept every identifier and marked unconfirmed items as such ("2026-12-04 at Nopa —
 proposed, not yet confirmed"). This is one scenario with 8 questions. It shows the mechanism
 works, not a failure rate.
@@ -263,7 +271,7 @@ works, not a failure rate.
 
 ## 7. Other verification
 
-- **Tests.** 62, with network calls blocked. Every bug fix has a test that was checked to fail
+- **Tests.** 67, with network calls blocked. Every bug fix has a test that was checked to fail
   without the fix. The suite passes on Python 3.10 and 3.11 from a fresh clone.
 - **Live end-to-end runs** against the real server (Sonnet 5.5, no Gmail):
   - a reminder created, then rescheduled; the same agent was reused and the trigger moved;

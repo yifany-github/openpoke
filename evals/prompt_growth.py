@@ -126,6 +126,10 @@ async def worst_case_summarizer(system_prompt: str, content: str) -> str:
 
 
 def measure_depth(tmp: Path, mode: str) -> list[dict]:
+    if hasattr(exec_agent_mod, "current_time_line"):  # keep output byte-reproducible
+        exec_agent_mod.current_time_line = lambda: (
+            "Current time: 2026-11-20 12:00 (America/New_York, UTC-0500). "
+            "Interpret relative times (\"in 1 minute\", \"tomorrow at 9am\") from this.")
     store = log_store_mod.ExecutionAgentLogStore(tmp / f"exec_{mode}")
     log_store_mod._execution_agent_logs = store
     exec_agent_mod.get_execution_agent_logs = lambda: store  # baseline binds the name at import

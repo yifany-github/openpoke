@@ -19,7 +19,7 @@ This fork bounds both:
 - rolling memory compaction for execution agents.
 
 On an independent 300-agent workload, correct routing goes from **50% to 88%** (Sonnet 5.5,
-paired p < 0.001). Execution prompts stay under ~11k tokens however often an agent is
+paired p < 0.001). Execution prompts stay under ~15k tokens however often an agent is
 reused.
 
 | Read | For |
@@ -32,7 +32,7 @@ reused.
 - **Run the tests and evaluators:**
   ```bash
   python3.11 -m venv .venv && .venv/bin/pip install -r server/requirements.txt pytest tiktoken
-  .venv/bin/python -m pytest                              # 62 tests, network blocked
+  .venv/bin/python -m pytest                              # 67 tests, network blocked
   .venv/bin/python -m evals.prompt_growth                 # prompt size vs. #agents and #reuses
   .venv/bin/python -m evals.routing_offline --vocab fresh # routing recall, K sweep, ablations
   .venv/bin/python -m evals.routing_llm --vocab fresh --n 40 --yes --delay 2   # live (needs OPENROUTER_API_KEY)
