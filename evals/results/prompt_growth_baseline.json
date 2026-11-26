@@ -1,0 +1,113 @@
+{
+  "label": "baseline",
+  "tokenizer": "cl100k_base (proxy for Claude)",
+  "assumptions": {
+    "tool_calls_per_run": 3,
+    "llm_iterations_per_run": 4
+  },
+  "width": [
+    {
+      "agents": 0,
+      "roster_tokens": 1,
+      "agents_listed": 0,
+      "system_prompt_tokens": 2202
+    },
+    {
+      "agents": 10,
+      "roster_tokens": 95,
+      "agents_listed": 10,
+      "system_prompt_tokens": 2202
+    },
+    {
+      "agents": 50,
+      "roster_tokens": 512,
+      "agents_listed": 50,
+      "system_prompt_tokens": 2202
+    },
+    {
+      "agents": 100,
+      "roster_tokens": 1050,
+      "agents_listed": 100,
+      "system_prompt_tokens": 2202
+    },
+    {
+      "agents": 300,
+      "roster_tokens": 3263,
+      "agents_listed": 300,
+      "system_prompt_tokens": 2202
+    },
+    {
+      "agents": 1000,
+      "roster_tokens": 11230,
+      "agents_listed": 1000,
+      "system_prompt_tokens": 2202
+    }
+  ],
+  "depth": [
+    {
+      "runs": 1,
+      "system_prompt_tokens": 1716,
+      "history_tokens": 933,
+      "peak_prompt_tokens_so_far": 1716,
+      "tokens_per_run_est": 6864,
+      "fits_context": true
+    },
+    {
+      "runs": 5,
+      "system_prompt_tokens": 5432,
+      "history_tokens": 4649,
+      "peak_prompt_tokens_so_far": 5432,
+      "tokens_per_run_est": 21728,
+      "fits_context": true
+    },
+    {
+      "runs": 10,
+      "system_prompt_tokens": 10077,
+      "history_tokens": 9294,
+      "peak_prompt_tokens_so_far": 10077,
+      "tokens_per_run_est": 40308,
+      "fits_context": true
+    },
+    {
+      "runs": 25,
+      "system_prompt_tokens": 24012,
+      "history_tokens": 23229,
+      "peak_prompt_tokens_so_far": 24012,
+      "tokens_per_run_est": 96048,
+      "fits_context": true
+    },
+    {
+      "runs": 50,
+      "system_prompt_tokens": 47237,
+      "history_tokens": 46454,
+      "peak_prompt_tokens_so_far": 47237,
+      "tokens_per_run_est": 188948,
+      "fits_context": true
+    },
+    {
+      "runs": 100,
+      "system_prompt_tokens": 93687,
+      "history_tokens": 92904,
+      "peak_prompt_tokens_so_far": 93687,
+      "tokens_per_run_est": 374748,
+      "fits_context": true
+    },
+    {
+      "runs": 200,
+      "system_prompt_tokens": 186587,
+      "history_tokens": 185804,
+      "peak_prompt_tokens_so_far": 186587,
+      "tokens_per_run_est": 746348,
+      "fits_context": true
+    }
+  ],
+  "slug_collision": {
+    "roster_entries": 3,
+    "log_files": 1,
+    "names": [
+      "Email to Alice",
+      "email-to-alice",
+      "Email  to  Alice!"
+    ]
+  }
+}

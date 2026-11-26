@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import List, Optional, Dict, Any
 
 from ...services.execution import get_execution_agent_logs
+from ...services.execution.agent_memory import render_history
 from ...logging_config import logger
 
 
@@ -59,41 +60,27 @@ class ExecutionAgent:
             agent_purpose=agent_purpose
         )
 
-    # Combine base system prompt with conversation history, applying conversation limits
+    # Combine base system prompt with a bounded view of the agent's history
     def build_system_prompt_with_history(self) -> str:
         """
         Build system prompt including agent history.
 
+        History is bounded: a rolling memory summary plus the most recent runs
+        (see services/execution/agent_memory.py). ``conversation_limit``, when set,
+        additionally caps how many recent raw runs are kept.
+
         Returns:
-            System prompt with embedded history transcript
+            System prompt with embedded history
         """
         base_prompt = self.build_system_prompt()
+        history = render_history(self.name)
+        if not history:
+            return base_prompt
 
-        # Load history transcript
-        transcript = self._log_store.load_transcript(self.name)
+        if self.conversation_limit and self.conversation_limit > 0:
+            history = _limit_recent_runs(history, self.conversation_limit)
 
-        if transcript:
-            # Apply conversation limit if needed
-            if self.conversation_limit and self.conversation_limit > 0:
-                # Parse entries and limit them
-                lines = transcript.split('\n')
-                request_count = sum(1 for line in lines if '<agent_request' in line)
-
-                if request_count > self.conversation_limit:
-                    # Find where to cut
-                    kept_requests = 0
-                    cutoff_index = len(lines)
-                    for i in range(len(lines) - 1, -1, -1):
-                        if '<agent_request' in lines[i]:
-                            kept_requests += 1
-                            if kept_requests == self.conversation_limit:
-                                cutoff_index = i
-                                break
-                    transcript = '\n'.join(lines[cutoff_index:])
-
-            return f"{base_prompt}\n\n# Execution History\n\n{transcript}"
-
-        return base_prompt
+        return f"{base_prompt}\n\n# Execution History\n\n{history}"
 
     # Format current instruction as user message for LLM consumption
     def build_messages_for_llm(self, current_instruction: str) -> List[Dict[str, str]]:
@@ -121,3 +108,13 @@ class ExecutionAgent:
         self._log_store.record_action(self.name, f"Calling {tool_name} with: {arguments[:200]}")
         # Record the tool response
         self._log_store.record_tool_response(self.name, tool_name, result[:500])
+
+
+def _limit_recent_runs(history: str, limit: int) -> str:
+    """Keep the memory summary and only the last ``limit`` raw runs."""
+    lines = history.split("\n")
+    request_lines = [i for i, line in enumerate(lines) if line.startswith("<agent_request")]
+    if len(request_lines) <= limit:
+        return history
+    cut_start, cut_end = request_lines[0], request_lines[-limit]
+    return "\n".join(lines[:cut_start] + lines[cut_end:])

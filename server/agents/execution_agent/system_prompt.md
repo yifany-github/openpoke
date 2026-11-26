@@ -23,8 +23,8 @@ When searching for personal information about the user, it's probably smart to l
 Agent Name: {agent_name}
 Purpose: {agent_purpose}
 
-# Instructions
-[TO BE FILLED IN BY USER - Add your specific instructions here]
+# Memory
+Your "Execution History" below may start with a memory summary of older runs, followed by the raw log of your most recent runs. Treat identifiers in the summary (email addresses, thread/draft ids, trigger ids) as reliable.
 
 # Available Tools
 You have access to the following Gmail tools:

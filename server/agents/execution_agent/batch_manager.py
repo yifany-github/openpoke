@@ -4,12 +4,15 @@ from __future__ import annotations
 
 import asyncio
 import uuid
+import weakref
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Dict, List, Optional
 
 from .runtime import ExecutionAgentRuntime, ExecutionResult
 from ...logging_config import logger
+from ...services.execution.log_store import get_execution_agent_logs
+from ...services.execution.roster import agent_key
 
 
 @dataclass
@@ -31,6 +34,14 @@ class _BatchState:
     created_at: datetime = field(default_factory=datetime.now)
     pending: int = 0
     results: List[ExecutionResult] = field(default_factory=list)
+
+
+_run_locks: "weakref.WeakKeyDictionary[asyncio.AbstractEventLoop, Dict[str, asyncio.Lock]]" = weakref.WeakKeyDictionary()
+
+
+def _agent_run_lock(agent_name: str) -> asyncio.Lock:
+    locks = _run_locks.setdefault(asyncio.get_running_loop(), {})
+    return locks.setdefault(agent_key(agent_name), asyncio.Lock())
 
 
 class ExecutionBatchManager:
@@ -58,12 +69,18 @@ class ExecutionBatchManager:
         batch_id = await self._register_pending_execution(agent_name, instructions, request_id)
 
         try:
-            logger.info(f"[{agent_name}] Execution started")
-            runtime = ExecutionAgentRuntime(agent_name=agent_name)
-            result = await asyncio.wait_for(
-                runtime.execute(instructions),
-                timeout=self.timeout_seconds,
-            )
+            # One run at a time per agent: concurrent runs of the same agent used to
+            # interleave their log entries, corrupting the agent's history. The request is
+            # logged here (not at dispatch) so trigger-fired runs are logged too and every
+            # run's entries stay contiguous.
+            async with _agent_run_lock(agent_name):
+                get_execution_agent_logs().record_request(agent_name, instructions)
+                logger.info(f"[{agent_name}] Execution started")
+                runtime = ExecutionAgentRuntime(agent_name=agent_name)
+                result = await asyncio.wait_for(
+                    runtime.execute(instructions),
+                    timeout=self.timeout_seconds,
+                )
             status = "SUCCESS" if result.success else "FAILED"
             logger.info(f"[{agent_name}] Execution finished: {status}")
         except asyncio.TimeoutError:
@@ -191,3 +208,14 @@ class ExecutionBatchManager:
             return
 
         loop.create_task(runtime.handle_agent_message(payload))
+
+
+_shared_manager: Optional[ExecutionBatchManager] = None
+
+
+def get_execution_batch_manager() -> ExecutionBatchManager:
+    """Process-wide manager shared by interaction-agent dispatches and triggers."""
+    global _shared_manager
+    if _shared_manager is None:
+        _shared_manager = ExecutionBatchManager()
+    return _shared_manager

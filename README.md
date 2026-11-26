@@ -7,6 +7,32 @@ OpenPoke is a simplified, open-source take on [Interaction Company’s](https://
 - Trigger scheduler and background watchers for reminders and "important email" alerts.
 - Next.js web UI that proxies everything through the shared `.env`, so plugging in API keys is the only setup.
 
+## This fork: fixing agent overload
+
+Execution agents in OpenPoke persist forever but were never managed. The roster grew without
+bound and was injected in full on every turn, and each agent's full history was re-sent on
+every run. This fork bounds both:
+- a metadata registry with relevance-ranked top-K roster, `search_agents`, and duplicate-name detection;
+- rolling memory compaction for execution agents.
+
+It also fixes a set of other problems found along the way, including a retired default model
+that made the app unusable.
+
+- **Write-up, results and trade-offs:** [DESIGN.md](DESIGN.md)
+- **Code:** `server/services/execution/{roster,agent_ranker,agent_memory}.py`, `server/agents/interaction_agent/{agent,tools}.py`
+- **Run the tests and evaluators:**
+  ```bash
+  python3.11 -m venv .venv && .venv/bin/pip install -r server/requirements.txt pytest tiktoken
+  .venv/bin/python -m pytest                      # 45 tests, no network
+  .venv/bin/python -m evals.prompt_growth         # prompt size vs. #agents and #reuses
+  .venv/bin/python -m evals.routing_offline       # routing recall, K sweep, ablations, dedupe
+  .venv/bin/python -m evals.routing_llm --n 30 --yes   # live LLM routing (needs OPENROUTER_API_KEY)
+  ```
+- **New settings** (all optional): `OPENPOKE_{INTERACTION,EXECUTION,SEARCH,SUMMARIZER,CLASSIFIER}_MODEL`,
+  `OPENPOKE_AGENT_ROSTER_LIMIT` (20), `OPENPOKE_AGENT_HISTORY_WINDOW` (5),
+  `OPENPOKE_AGENT_COMPACTION_BATCH` (5), `OPENPOKE_MAX_OUTPUT_TOKENS` (4096),
+  `OPENPOKE_LLM_MAX_CONCURRENCY` (8).
+
 ## Requirements
 - Python 3.10+
 - Node.js 18+

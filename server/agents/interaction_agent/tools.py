@@ -3,12 +3,14 @@
 import asyncio
 import json
 from dataclasses import dataclass
-from typing import Any, Optional
+from typing import Any, Dict, Optional
 
 from ...logging_config import logger
 from ...services.conversation import get_conversation_log
-from ...services.execution import get_agent_roster, get_execution_agent_logs
-from ..execution_agent.batch_manager import ExecutionBatchManager
+from ...services.execution import get_agent_roster
+from ...services.execution.agent_ranker import search_agents as rank_search_agents
+from ...services.execution.roster import AgentRecord
+from ..execution_agent.batch_manager import get_execution_batch_manager
 
 
 @dataclass
@@ -35,8 +37,27 @@ TOOL_SCHEMAS = [
                         "description": "Human-readable agent name describing its purpose (e.g., 'Vercel Job Offer', 'Email to Sharanjeet'). This name will be used to identify and potentially reuse the agent."
                     },
                     "instructions": {"type": "string", "description": "Instructions for the agent to execute."},
+                    "force_new": {
+                        "type": "boolean",
+                        "description": "Set true only after a call was rejected with similar_agents_exist and you have decided this really is a separate thread of work.",
+                    },
                 },
                 "required": ["agent_name", "instructions"],
+                "additionalProperties": False,
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "search_agents",
+            "description": "Search all existing execution agents (including ones not listed in <active_agents>) by keywords such as a person, company, or topic. Use it before creating a new agent when the request may continue earlier work.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {"type": "string", "description": "Keywords describing the earlier work, e.g. 'Alice lunch' or 'Stripe contract'."},
+                },
+                "required": ["query"],
                 "additionalProperties": False,
             },
         },
@@ -105,21 +126,57 @@ TOOL_SCHEMAS = [
     },
 ]
 
-_EXECUTION_BATCH_MANAGER = ExecutionBatchManager()
+_EXECUTION_BATCH_MANAGER = get_execution_batch_manager()
+
+
+def _agent_summary(record: AgentRecord) -> Dict[str, Any]:
+    last_used = record.last_used_dt
+    return {
+        "agent_name": record.name,
+        "description": record.description or None,
+        "last_used": last_used.strftime("%Y-%m-%d") if last_used else None,
+        "runs": record.run_count,
+    }
 
 
 # Create or reuse execution agent and dispatch instructions asynchronously
-def send_message_to_agent(agent_name: str, instructions: str) -> ToolResult:
-    """Send instructions to an execution agent."""
+def send_message_to_agent(agent_name: str, instructions: str, force_new: bool = False) -> ToolResult:
+    """Send instructions to an execution agent.
+
+    Name resolution, in order:
+    1. Same normalized key as an existing agent -> reuse it under its canonical name.
+    2. Content-similar to existing agents and not ``force_new`` -> reject and return the
+       candidates, so the model either reuses one or confirms a genuinely new agent.
+    3. Otherwise create a new agent.
+    """
     roster = get_agent_roster()
     roster.load()
-    existing_agents = set(roster.get_agents())
-    is_new = agent_name not in existing_agents
+    requested_name = agent_name
+    existing = roster.get(agent_name)
+    is_new = existing is None
+
+    if existing is not None:
+        agent_name = existing.name  # canonical spelling keeps logs/triggers consistent
+    elif not force_new:
+        similar = roster.find_similar(agent_name)
+        if similar:
+            logger.info(f"Agent '{agent_name}' rejected: similar agents exist")
+            return ToolResult(
+                success=False,
+                payload={
+                    "error": "similar_agents_exist",
+                    "requested_agent_name": requested_name,
+                    "similar_agents": [_agent_summary(r) for r in similar],
+                    "hint": "If this continues one of these threads, call send_message_to_agent again with its exact agent_name. If it is genuinely separate work, call again with force_new=true.",
+                },
+            )
 
     if is_new:
         roster.add_agent(agent_name)
+    roster.touch(agent_name)
+    if is_new or not roster.get(agent_name).description:
+        roster.update_description(agent_name, f"Started for: {instructions[:200]}")
 
-    get_execution_agent_logs().record_request(agent_name, instructions)
 
     action = "Created" if is_new else "Reused"
     logger.info(f"{action} agent: {agent_name}")
@@ -146,6 +203,22 @@ def send_message_to_agent(agent_name: str, instructions: str) -> ToolResult:
             "status": "submitted",
             "agent_name": agent_name,
             "new_agent_created": is_new,
+            **({"resolved_from": requested_name} if requested_name != agent_name else {}),
+        },
+    )
+
+
+# Search the full agent registry (the prompt only lists the most relevant agents)
+def search_agents(query: str) -> ToolResult:
+    roster = get_agent_roster()
+    roster.load()
+    matches = rank_search_agents(roster.records(), query, limit=10)
+    return ToolResult(
+        success=True,
+        payload={
+            "query": query,
+            "matches": [_agent_summary(r) for r in matches],
+            "total_agents": len(roster.records()),
         },
     )
 
@@ -229,6 +302,8 @@ def handle_tool_call(name: str, arguments: Any) -> ToolResult:
             return send_message_to_agent(**args)
         if name == "send_message_to_user":
             return send_message_to_user(**args)
+        if name == "search_agents":
+            return search_agents(**args)
         if name == "send_draft":
             return send_draft(**args)
         if name == "wait":
