@@ -1,0 +1,1146 @@
+{
+  "model": "anthropic/claude-sonnet-5.5",
+  "agents": 300,
+  "seed": 7,
+  "vocab": "fresh",
+  "full_roster": {
+    "summary": {
+      "n": 40,
+      "api_errors": 0,
+      "accuracy": 0.875,
+      "new_duplicate_rate": 0.025,
+      "wrong_existing_rate": 0.1,
+      "no_dispatch_rate": 0.0,
+      "avg_prompt_tokens_per_query": 30697,
+      "avg_llm_calls": 1.07,
+      "accuracy_by_kind": {
+        "explicit": 1.0,
+        "paraphrase": 0.625,
+        "vague": 0.875,
+        "person_only": 0.875,
+        "followup": 1.0
+      }
+    },
+    "rows": [
+      {
+        "kind": "explicit",
+        "message": "chase Anouk on the invitation please",
+        "target": "invitation-anouk",
+        "chosen": "invitation - Anouk",
+        "prompt_tokens": 28485,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "On it. I'll draft a nudge to Anouk about the invitation."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "explicit",
+        "message": "what's the latest from Gustavo regarding the quote",
+        "target": "orbit-gym-quote",
+        "chosen": "Orbit Gym quote",
+        "prompt_tokens": 28490,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Checking the Orbit Gym quote thread with Gustavo."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "explicit",
+        "message": "remind Wesley about the shipment",
+        "target": "hollis-legal-shipment",
+        "chosen": "Hollis Legal: shipment",
+        "prompt_tokens": 28484,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "On it. Drafting a nudge to Wesley about the shipment."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "explicit",
+        "message": "remind Katya about the refund",
+        "target": "maple-insurance-refund",
+        "chosen": "Maple Insurance refund",
+        "prompt_tokens": 28482,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "On it. I'll draft a refund nudge to Katya at Maple Insurance."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "explicit",
+        "message": "remind Emeka about the quote",
+        "target": "quote-emeka",
+        "chosen": "quote - Emeka",
+        "prompt_tokens": 28483,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "On it. I'll draft a quote reminder to Emeka for you to review."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "explicit",
+        "message": "chase Ulrich on the refund please",
+        "target": "refund-for-ulrich",
+        "chosen": "refund for Ulrich",
+        "prompt_tokens": 28485,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "On it, drafting a nudge to Ulrich about the refund."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "explicit",
+        "message": "chase Nikhil on the inspection please",
+        "target": "inspection-nikhil",
+        "chosen": "inspection - Nikhil",
+        "prompt_tokens": 28486,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "On it. Drafting a nudge to Nikhil about the inspection."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "explicit",
+        "message": "remind Ingrid about the deposit",
+        "target": "ingrid-cedarwood-properties",
+        "chosen": "Ingrid (Cedarwood Properties)",
+        "prompt_tokens": 28485,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "remind Dmitri about the pricing",
+        "target": "dmitri-maple-insurance",
+        "chosen": "Dmitri (Maple Insurance)",
+        "prompt_tokens": 28485,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "chase Dmitri on the visit please",
+        "target": "thread-with-dmitri-on-appointment",
+        "chosen": "Thread with Dmitri on appointment",
+        "prompt_tokens": 28485,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "On it. I'm assuming \"the visit\" is the appointment thread with Dmitri at Maple Insurance, so I'm drafting a nudge there."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "what's the latest from Aurelio regarding the security deposit",
+        "target": "cedarwood-properties-deposit",
+        "chosen": "Cedarwood Properties deposit",
+        "prompt_tokens": 28492,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Checking your thread with Aurelio on the deposit."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "remind Benedikt about the insurance claim",
+        "target": "hollis-legal-claim",
+        "chosen": "Hollis Legal claim",
+        "prompt_tokens": 28487,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "On it. I'm drafting a nudge to Benedikt at Hollis Legal about the claim, and I'll show it to you before it goes out."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "what's the latest from Oksana regarding the case",
+        "target": "claim-for-oksana",
+        "chosen": "membership - Oksana",
+        "prompt_tokens": 28488,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": false,
+        "outcome": "wrong_existing"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "what's the latest from Wesley regarding the security deposit",
+        "target": "hollis-legal-deposit",
+        "chosen": "Hollis Legal: deposit",
+        "prompt_tokens": 28491,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Checking the Wesley deposit thread now."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "chase Soren on the walkthrough please",
+        "target": "inspection-soren",
+        "chosen": "Soren walkthrough",
+        "prompt_tokens": 57819,
+        "calls": 2,
+        "rejections": 0,
+        "searches": 1,
+        "correct": false,
+        "outcome": "new_duplicate"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "remind Hiroshi about the plan",
+        "target": "membership-hiroshi",
+        "chosen": "Hiroshi (Maple Insurance)",
+        "prompt_tokens": 28485,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": false,
+        "outcome": "wrong_existing"
+      },
+      {
+        "kind": "vague",
+        "message": "is the Juniper Bank delivery sorted yet?",
+        "target": "shipment-delphine",
+        "chosen": "shipment - Delphine",
+        "prompt_tokens": 28491,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Checking the Juniper Bank shipment thread with Delphine."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "vague",
+        "message": "anything new from Brightline Dental about the insurance claim?",
+        "target": "soren-brightline-dental",
+        "chosen": "Soren (Brightline Dental)",
+        "prompt_tokens": 28492,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "vague",
+        "message": "is the Juniper Bank walkthrough sorted yet?",
+        "target": "juniper-bank-inspection",
+        "chosen": "Juniper Bank: inspection",
+        "prompt_tokens": 28493,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Checking the Juniper Bank inspection thread for the walkthrough status."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "vague",
+        "message": "where did we land with Brightline Dental on the down payment",
+        "target": "follow-ups-with-soren",
+        "chosen": "Soren (Brightline Dental)",
+        "prompt_tokens": 57742,
+        "calls": 2,
+        "rejections": 0,
+        "searches": 1,
+        "said_to_user": [
+          "Checking your Brightline Dental threads with Soren for the down payment."
+        ],
+        "correct": false,
+        "outcome": "wrong_existing"
+      },
+      {
+        "kind": "vague",
+        "message": "is the Brightline Dental money back sorted yet?",
+        "target": "refund-soren",
+        "chosen": "refund - Soren",
+        "prompt_tokens": 28490,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Checking the Brightline Dental refund thread now."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "vague",
+        "message": "where did we land with Atlas Movers on the package",
+        "target": "atlas-movers-shipment",
+        "chosen": "Atlas Movers shipment",
+        "prompt_tokens": 28488,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "vague",
+        "message": "where did we land with Brightline Dental on the insurance claim",
+        "target": "soren-brightline-dental",
+        "chosen": "Soren (Brightline Dental)",
+        "prompt_tokens": 57939,
+        "calls": 2,
+        "rejections": 0,
+        "searches": 1,
+        "said_to_user": [
+          "Checking the Brightline Dental threads with Soren for the claim status."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "vague",
+        "message": "is the Juniper Bank subscription sorted yet?",
+        "target": "juniper-bank-membership",
+        "chosen": "Juniper Bank: membership",
+        "prompt_tokens": 28491,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "person_only",
+        "message": "nudge Delphine",
+        "target": "juniper-bank-inspection",
+        "chosen": "shipment - Delphine",
+        "prompt_tokens": 28480,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": false,
+        "outcome": "wrong_existing"
+      },
+      {
+        "kind": "person_only",
+        "message": "heard back from Ulrich?",
+        "target": "thread-with-ulrich-on-statement",
+        "chosen": "Thread with Ulrich on statement",
+        "prompt_tokens": 28483,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "person_only",
+        "message": "heard back from Katya?",
+        "target": "shipment-katya",
+        "chosen": "shipment - Katya",
+        "prompt_tokens": 28481,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "person_only",
+        "message": "any word from Thandiwe?",
+        "target": "refund-thandiwe",
+        "chosen": "refund - Thandiwe",
+        "prompt_tokens": 28483,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Checking the refund thread with Thandiwe, the most recent one."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "person_only",
+        "message": "nudge Pablo",
+        "target": "shipment-pablo",
+        "chosen": "shipment - Pablo",
+        "prompt_tokens": 28480,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "person_only",
+        "message": "heard back from Gustavo?",
+        "target": "manuscript-gustavo",
+        "chosen": "manuscript - Gustavo",
+        "prompt_tokens": 28483,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "person_only",
+        "message": "heard back from Jamal?",
+        "target": "maple-insurance-deposit",
+        "chosen": "Maple Insurance: deposit",
+        "prompt_tokens": 28482,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Checking the latest Jamal thread (the deposit one)."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "person_only",
+        "message": "nudge Calla",
+        "target": "calla-atlas-movers",
+        "chosen": "Calla (Atlas Movers)",
+        "prompt_tokens": 28479,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "followup",
+        "message": "make it friendlier and send",
+        "target": "harbor-vet-quote",
+        "chosen": "Harbor Vet: quote",
+        "prompt_tokens": 28534,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "followup",
+        "message": "make it friendlier and send",
+        "target": "lease-esperanza",
+        "chosen": "lease - Esperanza",
+        "prompt_tokens": 28536,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "followup",
+        "message": "perfect, go ahead and send",
+        "target": "deposit-thandiwe",
+        "chosen": "deposit - Thandiwe",
+        "prompt_tokens": 28548,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Sending it to Thandiwe now."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "followup",
+        "message": "send it",
+        "target": "claim-for-marisol",
+        "chosen": "claim for Marisol",
+        "prompt_tokens": 28526,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Sending it to Marisol now."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "followup",
+        "message": "make it friendlier and send",
+        "target": "claim-nikhil",
+        "chosen": "claim - Nikhil",
+        "prompt_tokens": 28536,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "followup",
+        "message": "make it friendlier and send",
+        "target": "hollis-legal-manuscript",
+        "chosen": "Hollis Legal manuscript",
+        "prompt_tokens": 28538,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "followup",
+        "message": "make it friendlier and send",
+        "target": "nikhil-hollis-legal",
+        "chosen": "Nikhil (Hollis Legal)",
+        "prompt_tokens": 28541,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Warming it up now. I'll show you the new version before it goes out."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "followup",
+        "message": "perfect, go ahead and send",
+        "target": "orbit-gym-claim",
+        "chosen": "Orbit Gym claim",
+        "prompt_tokens": 28536,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Sending it now."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      }
+    ]
+  },
+  "after_heuristic_desc": {
+    "summary": {
+      "n": 40,
+      "api_errors": 0,
+      "accuracy": 0.85,
+      "new_duplicate_rate": 0.075,
+      "wrong_existing_rate": 0.075,
+      "no_dispatch_rate": 0.0,
+      "avg_prompt_tokens_per_query": 8406,
+      "avg_llm_calls": 1.23,
+      "accuracy_by_kind": {
+        "explicit": 1.0,
+        "paraphrase": 0.625,
+        "vague": 0.625,
+        "person_only": 1.0,
+        "followup": 1.0
+      }
+    },
+    "rows": [
+      {
+        "kind": "explicit",
+        "message": "chase Anouk on the invitation please",
+        "target": "invitation-anouk",
+        "chosen": "invitation - Anouk",
+        "prompt_tokens": 6686,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "on it, drafting a nudge to Anouk about the invitation."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "explicit",
+        "message": "what's the latest from Gustavo regarding the quote",
+        "target": "orbit-gym-quote",
+        "chosen": "Orbit Gym quote",
+        "prompt_tokens": 6684,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Checking the Gustavo quote thread."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "explicit",
+        "message": "remind Wesley about the shipment",
+        "target": "hollis-legal-shipment",
+        "chosen": "Hollis Legal: shipment",
+        "prompt_tokens": 6677,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "On it. I'll draft a shipment reminder to Wesley for you to review."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "explicit",
+        "message": "remind Katya about the refund",
+        "target": "maple-insurance-refund",
+        "chosen": "Maple Insurance refund",
+        "prompt_tokens": 6628,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "explicit",
+        "message": "remind Emeka about the quote",
+        "target": "quote-emeka",
+        "chosen": "quote - Emeka",
+        "prompt_tokens": 6654,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "explicit",
+        "message": "chase Ulrich on the refund please",
+        "target": "refund-for-ulrich",
+        "chosen": "refund for Ulrich",
+        "prompt_tokens": 6699,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "On it. I'll draft a nudge to Ulrich on the refund thread."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "explicit",
+        "message": "chase Nikhil on the inspection please",
+        "target": "inspection-nikhil",
+        "chosen": "inspection - Nikhil",
+        "prompt_tokens": 6705,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "On it. I'll draft a nudge to Nikhil on the inspection thread and show you before anything goes out."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "explicit",
+        "message": "remind Ingrid about the deposit",
+        "target": "ingrid-cedarwood-properties",
+        "chosen": "Ingrid (Cedarwood Properties)",
+        "prompt_tokens": 6726,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "remind Dmitri about the pricing",
+        "target": "dmitri-maple-insurance",
+        "chosen": "Dmitri pricing reminder",
+        "prompt_tokens": 14460,
+        "calls": 2,
+        "rejections": 0,
+        "searches": 1,
+        "said_to_user": [
+          "On it. Drafting a pricing reminder for Dmitri."
+        ],
+        "correct": false,
+        "outcome": "new_duplicate"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "chase Dmitri on the visit please",
+        "target": "thread-with-dmitri-on-appointment",
+        "chosen": "Thread with Dmitri on appointment",
+        "prompt_tokens": 14458,
+        "calls": 2,
+        "rejections": 0,
+        "searches": 1,
+        "said_to_user": [
+          "Drafting a nudge to Dmitri on the appointment thread. Shout if you meant a different visit."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "what's the latest from Aurelio regarding the security deposit",
+        "target": "cedarwood-properties-deposit",
+        "chosen": "Cedarwood Properties deposit",
+        "prompt_tokens": 6716,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Checking the Aurelio deposit thread now."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "remind Benedikt about the insurance claim",
+        "target": "hollis-legal-claim",
+        "chosen": "Hollis Legal claim",
+        "prompt_tokens": 6727,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Drafting a nudge to Benedikt on the claim thread."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "what's the latest from Oksana regarding the case",
+        "target": "claim-for-oksana",
+        "chosen": "membership - Oksana",
+        "prompt_tokens": 14328,
+        "calls": 2,
+        "rejections": 0,
+        "searches": 1,
+        "correct": false,
+        "outcome": "wrong_existing"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "what's the latest from Wesley regarding the security deposit",
+        "target": "hollis-legal-deposit",
+        "chosen": "Hollis Legal: deposit",
+        "prompt_tokens": 6698,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Checking the Wesley deposit thread."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "chase Soren on the walkthrough please",
+        "target": "inspection-soren",
+        "chosen": "inspection - Soren",
+        "prompt_tokens": 14309,
+        "calls": 2,
+        "rejections": 0,
+        "searches": 1,
+        "said_to_user": [
+          "On it. I'm using the inspection thread with Soren and drafting a nudge about the walkthrough. I'll show it to you before anything goes out."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "paraphrase",
+        "message": "remind Hiroshi about the plan",
+        "target": "membership-hiroshi",
+        "chosen": "plan - Hiroshi",
+        "prompt_tokens": 14516,
+        "calls": 2,
+        "rejections": 0,
+        "searches": 1,
+        "said_to_user": [
+          "On it. Drafting a nudge to Hiroshi about the plan."
+        ],
+        "correct": false,
+        "outcome": "new_duplicate"
+      },
+      {
+        "kind": "vague",
+        "message": "is the Juniper Bank delivery sorted yet?",
+        "target": "shipment-delphine",
+        "chosen": "Juniper Bank delivery status",
+        "prompt_tokens": 13859,
+        "calls": 2,
+        "rejections": 0,
+        "searches": 1,
+        "correct": false,
+        "outcome": "new_duplicate"
+      },
+      {
+        "kind": "vague",
+        "message": "anything new from Brightline Dental about the insurance claim?",
+        "target": "soren-brightline-dental",
+        "chosen": "Soren (Brightline Dental)",
+        "prompt_tokens": 6695,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Checking the Brightline claim thread with Soren."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "vague",
+        "message": "is the Juniper Bank walkthrough sorted yet?",
+        "target": "juniper-bank-inspection",
+        "chosen": "Juniper Bank: inspection",
+        "prompt_tokens": 13867,
+        "calls": 2,
+        "rejections": 0,
+        "searches": 1,
+        "said_to_user": [
+          "Checking the Juniper Bank inspection thread with Delphine, since that's the closest match."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "vague",
+        "message": "where did we land with Brightline Dental on the down payment",
+        "target": "follow-ups-with-soren",
+        "chosen": "Brightline Dental: statement",
+        "prompt_tokens": 14103,
+        "calls": 2,
+        "rejections": 0,
+        "searches": 1,
+        "said_to_user": [
+          "Digging through the Brightline emails for the down payment now."
+        ],
+        "correct": false,
+        "outcome": "wrong_existing"
+      },
+      {
+        "kind": "vague",
+        "message": "is the Brightline Dental money back sorted yet?",
+        "target": "refund-soren",
+        "chosen": "Soren (Brightline Dental)",
+        "prompt_tokens": 14369,
+        "calls": 2,
+        "rejections": 0,
+        "searches": 1,
+        "said_to_user": [
+          "Checking the Brightline Dental claim thread with Soren."
+        ],
+        "correct": false,
+        "outcome": "wrong_existing"
+      },
+      {
+        "kind": "vague",
+        "message": "where did we land with Atlas Movers on the package",
+        "target": "atlas-movers-shipment",
+        "chosen": "Atlas Movers shipment",
+        "prompt_tokens": 6699,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "vague",
+        "message": "where did we land with Brightline Dental on the insurance claim",
+        "target": "soren-brightline-dental",
+        "chosen": "Soren (Brightline Dental)",
+        "prompt_tokens": 6695,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "vague",
+        "message": "is the Juniper Bank subscription sorted yet?",
+        "target": "juniper-bank-membership",
+        "chosen": "Juniper Bank: membership",
+        "prompt_tokens": 6705,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "person_only",
+        "message": "nudge Delphine",
+        "target": "juniper-bank-inspection",
+        "chosen": "Juniper Bank: inspection",
+        "prompt_tokens": 6688,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "person_only",
+        "message": "heard back from Ulrich?",
+        "target": "thread-with-ulrich-on-statement",
+        "chosen": "Thread with Ulrich on statement",
+        "prompt_tokens": 6715,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Checking the latest Ulrich thread (the statement one)."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "person_only",
+        "message": "heard back from Katya?",
+        "target": "shipment-katya",
+        "chosen": "shipment - Katya",
+        "prompt_tokens": 6651,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "person_only",
+        "message": "any word from Thandiwe?",
+        "target": "refund-thandiwe",
+        "chosen": "refund - Thandiwe",
+        "prompt_tokens": 6759,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Checking your inbox for Thandiwe, starting with the refund thread since it's the latest."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "person_only",
+        "message": "nudge Pablo",
+        "target": "shipment-pablo",
+        "chosen": "shipment - Pablo",
+        "prompt_tokens": 6687,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "person_only",
+        "message": "heard back from Gustavo?",
+        "target": "manuscript-gustavo",
+        "chosen": "manuscript - Gustavo",
+        "prompt_tokens": 6714,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "person_only",
+        "message": "heard back from Jamal?",
+        "target": "maple-insurance-deposit",
+        "chosen": "Maple Insurance: deposit",
+        "prompt_tokens": 6678,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "checking the latest Jamal thread (the deposit one)."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "person_only",
+        "message": "nudge Calla",
+        "target": "calla-atlas-movers",
+        "chosen": "Calla (Atlas Movers)",
+        "prompt_tokens": 6648,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "followup",
+        "message": "make it friendlier and send",
+        "target": "harbor-vet-quote",
+        "chosen": "Harbor Vet: quote",
+        "prompt_tokens": 6737,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "followup",
+        "message": "make it friendlier and send",
+        "target": "lease-esperanza",
+        "chosen": "lease - Esperanza",
+        "prompt_tokens": 6750,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Warming it up now. I'll show you the new version before it goes out."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "followup",
+        "message": "perfect, go ahead and send",
+        "target": "deposit-thandiwe",
+        "chosen": "deposit - Thandiwe",
+        "prompt_tokens": 6829,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Sending it now."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "followup",
+        "message": "send it",
+        "target": "claim-for-marisol",
+        "chosen": "claim for Marisol",
+        "prompt_tokens": 6708,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Sending it now."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "followup",
+        "message": "make it friendlier and send",
+        "target": "claim-nikhil",
+        "chosen": "claim - Nikhil",
+        "prompt_tokens": 6730,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Warming it up now. I'll show you the new version before it goes out."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "followup",
+        "message": "make it friendlier and send",
+        "target": "hollis-legal-manuscript",
+        "chosen": "Hollis Legal manuscript",
+        "prompt_tokens": 6768,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "followup",
+        "message": "make it friendlier and send",
+        "target": "nikhil-hollis-legal",
+        "chosen": "Nikhil (Hollis Legal)",
+        "prompt_tokens": 6763,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "correct": true,
+        "outcome": "correct"
+      },
+      {
+        "kind": "followup",
+        "message": "perfect, go ahead and send",
+        "target": "orbit-gym-claim",
+        "chosen": "Orbit Gym claim",
+        "prompt_tokens": 6754,
+        "calls": 1,
+        "rejections": 0,
+        "searches": 0,
+        "said_to_user": [
+          "Sending it to Emeka now."
+        ],
+        "correct": true,
+        "outcome": "correct"
+      }
+    ]
+  }
+}

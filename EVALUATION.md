@@ -148,7 +148,41 @@ person's threads owns the quote. It also never sees recency.
 **Excluding the person-only kind**, whose label matches a prompt rule (see §6), the result is
 20/32 → 28/32.
 
-### 4.2 Ablations (dev workload, seed 13, n = 30)
+### 4.2 Ablations (fresh workload, same 40 queries)
+
+`…_fresh.json` (baseline, after) and `…_fresh_ablations.json`:
+
+| Condition | correct | silent misroute | prompt tokens / query | by kind: explicit / paraphrase / vague / person_only / followup |
+|---|---|---|---|---|
+| baseline | 20/40 | 20 | 9,749 | 5 / 2 / 5 / 0 / 8 (of 8) |
+| full_roster | 35/40 | 5 | **30,697** | 8 / 5 / 7 / 7 / 8 |
+| after_heuristic_desc | 34/40 | 6 | 8,406 | 8 / 5 / 5 / 8 / 8 |
+| after | **35/40** | 5 | **8,149** | 8 / 5 / 7 / 7 / 8 |
+
+Paired (exact McNemar, two-sided):
+
+| A vs B | only A right | only B right | p |
+|---|---|---|---|
+| after vs baseline | 16 | 1 | 0.0003 |
+| full_roster vs baseline | 17 | 2 | 0.001 |
+| after_heuristic_desc vs baseline | 16 | 2 | 0.001 |
+| after vs full_roster | 1 | 1 | 1.0 |
+| after vs after_heuristic_desc | 3 | 2 | 1.0 |
+
+**Reading:**
+- **What fixes routing is the metadata**: descriptions plus recency. Every condition that has
+  it beats names-only by about 15 queries.
+- **Top-K costs nothing in accuracy.** It is identical to listing everything, at 1/3.8 the
+  tokens.
+- **The LLM description adds little over the heuristic one** on this workload (35 vs 34).
+
+The remaining failures are mostly synonym misses: "plan" for "membership", "case" for
+"claim", "pricing" for "quote", "walkthrough" for "inspection". There are also a few vague and
+person-only wrong picks. Only two queries fail in every metadata condition ("remind Hiroshi
+about the plan" and "where did we land with Brightline Dental on the down payment"). The
+synonym misses are the case for an embedding scorer.
+
+#### Earlier ablation (dev workload, seed 13, n = 30, prompt before de-leaking)
 
 `…_seed13_v3.json` and `…_seed13_ablations.json`:
 
@@ -169,13 +203,11 @@ Paired results:
   way (p = 0.06). All 5 are vague queries (5/6 → 1/6), which need the organisation in the
   description.
 
-**Reading:** the accuracy gain comes from *descriptions and recency*. Top-K gives the same
-accuracy at about a quarter of the tokens, and it is what stays feasible as agents
-accumulate. Description *quality* matters, which is why new agents now get an LLM
-description after their first run and don't have to wait for compaction.
-
-These ablations ran on the dev workload with the earlier prompt. Re-running them on the fresh
-workload was cut short by the same key cap; see `…_fresh.json`.
+This run had pointed the same way on top-K. It suggested a large description-quality gap,
+which the independent workload did not reproduce. The gap came from the dev workload's
+organisation-only queries, where the organisation appeared only in the rich descriptions.
+It is kept here as history, and as a reminder of why the headline comes from the
+independent workload.
 
 ### 4.3 How the prompt evolved, and what was wrong along the way
 
