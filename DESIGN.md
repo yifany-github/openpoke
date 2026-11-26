@@ -141,7 +141,7 @@ they own. Explain `<active_agents>`, `<more_agents>`, `search_agents` and
 
 ```bash
 python3.11 -m venv .venv && .venv/bin/pip install -r server/requirements.txt pytest tiktoken
-.venv/bin/python -m pytest                       # 45 unit/integration tests
+.venv/bin/python -m pytest                       # 49 unit/integration tests
 .venv/bin/python -m evals.prompt_growth          # width/depth token curves (after)
 .venv/bin/python -m evals.routing_offline        # routing recall, K sweep, ablations, dedupe
 OPENROUTER_API_KEY=… .venv/bin/python -m evals.routing_llm --n 30 --yes --seed 11 --delay 2   # live LLM routing (~$0.5)
@@ -155,7 +155,7 @@ git worktree add ../openpoke-main main
 cd ../openpoke-main && PYTHONPATH=. ../openpoke/.venv/bin/python ../openpoke/evals/prompt_growth.py --label baseline
 ```
 
-### Tests (`tests/`, 45 tests, no network)
+### Tests (`tests/`, 49 tests, no network)
 
 All stores (roster, logs, memory, triggers) are redirected to `tmp_path`, and the LLM is
 stubbed.
@@ -177,8 +177,17 @@ stubbed.
 - `test_llm_client.py`: `max_tokens` always sent; 429/503 retried; 402 not retried;
   concurrency capped (via `httpx.MockTransport`).
 
-The two lock tests were checked *against* the fix: with the locks replaced by no-ops, both
-fail.
+The two lock tests and the `wait` test were checked *against* the fix: with the fix
+removed, they fail.
+
+**End-to-end smoke test** (real server, real Sonnet 5.5, no Gmail):
+1. "remind me to call mom tomorrow at 6pm" created an agent named after the thread (`Call mom
+   reminder`), gave it a description, and stored the trigger.
+2. "I am in New York. actually make it 7pm" **reused** that agent (`run_count` 2) and moved
+   the trigger to 00:00 UTC.
+
+That run is what surfaced the `wait` and logging bugs in §5. After the fix, the replay logged
+zero errors.
 
 ### Evaluators (`evals/`)
 
@@ -365,6 +374,8 @@ Fixed in this branch, each with tests:
 | **Non-atomic, lossy roster writes.** The file was truncated (`open('w')`) *before* locking, and writers saved stale in-memory copies over each other | `roster.py` | Read-modify-write under a lock file; temp file + `os.replace` |
 | **Leftover template text in the execution prompt** (`[TO BE FILLED IN BY USER …]`) sent on every call | `execution_agent/system_prompt.md` | Replaced with guidance on reading the memory summary |
 | **The prompt references a tool that doesn't exist** (`reacttomessage`) | `interaction_agent/system_prompt.md` | Removed |
+| **`wait` never ended the turn.** Found in a live end-to-end run: the model called `wait` repeatedly until the 8-iteration limit raised, so turns "failed" after burning extra LLM calls | `interaction_agent/runtime.py` | `wait` ends the turn |
+| **Error logs never said why.** Failures are logged as `logger.error(msg, extra={"error": …})`, but the formatter dropped `extra` fields | `logging_config.py` | Formatter appends `extra` fields |
 
 Found but not fixed here, with the proposed fix:
 
