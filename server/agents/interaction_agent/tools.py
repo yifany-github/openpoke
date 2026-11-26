@@ -55,7 +55,7 @@ TOOL_SCHEMAS = [
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "query": {"type": "string", "description": "Keywords describing the earlier work, e.g. 'Alice lunch' or 'Stripe contract'."},
+                    "query": {"type": "string", "description": "Keywords describing the earlier work, e.g. 'Sam dinner' or 'lease renewal'."},
                 },
                 "required": ["query"],
                 "additionalProperties": False,

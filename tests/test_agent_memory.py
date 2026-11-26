@@ -171,3 +171,35 @@ def test_compaction_discards_summary_if_history_was_cleared_meanwhile(stores, se
     assert stores.memory.load(AGENT).covered_runs == 0
     history = render_history(AGENT)
     assert "old facts" not in history and history.count("<agent_request") == 2
+
+
+def test_new_agent_gets_an_llm_description_after_first_run(stores, settings):
+    stores.roster.add_agent(AGENT)
+    stores.roster.update_description(AGENT, "Started for: email her about lunch")
+    add_runs(stores, 1)
+    prompts = []
+
+    async def fake(system_prompt, content):
+        prompts.append(content)
+        return "DESCRIPTION: Lunch scheduling with Alice (alice@acme.com) at Acme"
+
+    assert asyncio.run(agent_memory.describe(AGENT, fake))
+    assert stores.roster.get(AGENT).description == "Lunch scheduling with Alice (alice@acme.com) at Acme"
+    assert stores.memory.load(AGENT).description.startswith("Lunch scheduling")
+    assert "request 1" in prompts[0]
+    assert asyncio.run(agent_memory.describe(AGENT, fake)) is False  # only once
+
+
+def test_runtime_schedules_description_for_new_agents(stores, settings, monkeypatch):
+    stores.roster.add_agent(AGENT)
+    stores.logs.record_request(AGENT, "request 1: email alice")
+
+    async def fake_llm(**kwargs):
+        return {"choices": [{"message": {"content": "Draft created"}}]}
+
+    described, compacted = [], []
+    monkeypatch.setattr(exec_runtime, "request_chat_completion", fake_llm)
+    monkeypatch.setattr(exec_runtime, "schedule_description", lambda name: described.append(name))
+    monkeypatch.setattr(exec_runtime, "schedule_compaction", lambda name: compacted.append(name))
+    asyncio.run(exec_runtime.ExecutionAgentRuntime(AGENT).execute("request 1: email alice"))
+    assert described == [AGENT]

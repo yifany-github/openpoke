@@ -1,0 +1,96 @@
+{
+  "summarizer_model": "anthropic/claude-haiku-5.5",
+  "answer_model": "anthropic/claude-sonnet-5.5",
+  "runs": 20,
+  "compactions": 3,
+  "covered_runs": 15,
+  "prompt_tokens_full": 3682,
+  "prompt_tokens_bounded": 1847,
+  "description": "Owns email threads with Alice (alice@acme.com) and her assistant Tom: lunch scheduling, the contract thread, invoice tracking, and the weekly Monday 9am check for her replies.",
+  "summary": "DESCRIPTION: Owns email threads with Alice (alice@acme.com) and her assistant Tom: lunch scheduling, the contract thread, invoice tracking, and the weekly Monday 9am check for her replies.\nMEMORY:\n- Alice's email: alice@acme.com. She prefers Thursdays for lunch.\n- Alice's assistant: Tom (tom@acme.com). Per Alice's email, cc Tom on scheduling emails.\n- Lunch thread 18c-lunch-001: draft r-1001 (\"Lunch next week?\") was confirmed by the user and sent 2026-11-26. A later thread snippet reads \"Can we do Dec 4 at Nopa instead?\" (2026-11-26 17:09). Treat 2026-12-04 at Nopa as proposed, not yet confirmed by the user or Alice.\n- Invoice from Alice (found 2026-11-26 17:09): INV-3391 for $1,250, due 2026-12-15. Not yet confirmed as recorded or acted on.\n- Recurring trigger 41 (active): rrule FREQ=WEEKLY;BYDAY=MO;BYHOUR=9, payload \"check Alice replies\". Each run runs gmail_search \"from:alice@acme.com newer_than:1d\" and reports new replies.\n- Contract thread: 18c-contract-207, sent by Alice. Priya (priya@stripe.com) is cc'd. No updates recorded.\n- Last reply check (2026-11-26 17:09): no new messages from alice@acme.com in the last day.",
+  "before_correct": 8,
+  "after_correct": 8,
+  "questions": 8,
+  "rows": [
+    {
+      "question": "What is the Gmail thread id of the contract thread with Alice?",
+      "expected": [
+        "18c-contract-207"
+      ],
+      "before_full_history": "The contract thread with Alice is 18c-contract-207.",
+      "before_correct": true,
+      "after_bounded_history": "The contract thread with Alice has the Gmail thread id 18c-contract-207.",
+      "after_correct": true
+    },
+    {
+      "question": "Who is cc'd on the contract thread? Give the email address.",
+      "expected": [
+        "priya@stripe.com"
+      ],
+      "before_full_history": "Priya is cc'd on the contract thread (18c-contract-207), at priya@stripe.com.",
+      "before_correct": true,
+      "after_bounded_history": "Priya is cc'd on the contract thread (18c-contract-207), at priya@stripe.com.",
+      "after_correct": true
+    },
+    {
+      "question": "What is the email address of Alice's assistant?",
+      "expected": [
+        "tom@acme.com"
+      ],
+      "before_full_history": "Alice's assistant is Tom, and his email address is tom@acme.com.",
+      "before_correct": true,
+      "after_bounded_history": "Alice's assistant is Tom, and his email address is tom@acme.com.",
+      "after_correct": true
+    },
+    {
+      "question": "Which day of the week does Alice prefer for lunch?",
+      "expected": [
+        "thursday"
+      ],
+      "before_full_history": "Alice prefers Thursdays for lunch, though her latest message proposed moving the lunch to Dec 4 at Nopa.",
+      "before_correct": true,
+      "after_bounded_history": "Alice prefers Thursdays for lunch.",
+      "after_correct": true
+    },
+    {
+      "question": "Where and on what date is the lunch with Alice now?",
+      "expected": [
+        "nopa"
+      ],
+      "before_full_history": "The lunch with Alice was moved to Nopa on December 4, 2026 (2026-12-04), per her message on thread 18c-lunch-001.",
+      "before_correct": true,
+      "after_bounded_history": "Per the latest thread snippet, the lunch is proposed for Dec 4, 2026 at Nopa, but that's not yet confirmed by you or Alice.",
+      "after_correct": true
+    },
+    {
+      "question": "What is the invoice number Alice forwarded?",
+      "expected": [
+        "inv-3391"
+      ],
+      "before_full_history": "The invoice Alice forwarded is INV-3391, for $1,250 and due 2026-12-15.",
+      "before_correct": true,
+      "after_bounded_history": "The invoice from Alice is INV-3391 for $1,250, due 2026-12-15 (my notes say it was found in her emails, not specifically forwarded).",
+      "after_correct": true
+    },
+    {
+      "question": "What is the current status of trigger 41?",
+      "expected": [
+        "paused"
+      ],
+      "before_full_history": "Trigger 41 (the Monday 9am check for Alice's replies) is currently paused.",
+      "before_correct": true,
+      "after_bounded_history": "Trigger 41 (the weekly Monday 9am \"check Alice replies\" reminder) is currently paused, as I set it via updateTrigger in the most recent pause request.",
+      "after_correct": true
+    },
+    {
+      "question": "What thread id is the lunch conversation on?",
+      "expected": [
+        "18c-lunch-001"
+      ],
+      "before_full_history": "The lunch conversation is on thread 18c-lunch-001.",
+      "before_correct": true,
+      "after_bounded_history": "The lunch conversation is on thread 18c-lunch-001.",
+      "after_correct": true
+    }
+  ]
+}

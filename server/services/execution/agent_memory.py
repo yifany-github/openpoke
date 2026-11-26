@@ -284,6 +284,73 @@ def refresh_description(agent_name: str, latest_response: str) -> None:
     roster.update_description(agent_name, f"{purpose} | Latest: {latest}" if latest else purpose)
 
 
+_DESCRIBE_SYSTEM_PROMPT = dedent(
+    """
+    You label execution agents inside a personal assistant so a router can tell them apart.
+    From the agent's first task log, write ONE line (max 25 words) saying what thread of work
+    this agent owns. Include the people, organisations, email addresses and topic involved.
+    Output only: DESCRIPTION: <line>
+    """
+).strip()
+
+
+async def describe(agent_name: str, summarizer: Optional[Summarizer] = None) -> bool:
+    """Write an LLM description after an agent's first run.
+
+    Compaction also produces a description, but only once an agent reaches WINDOW + BATCH
+    runs, and most agents never do. Until then the registry only has the heuristic
+    "Started for: <instruction> | Latest: <result>", which often lacks the organisation or
+    email a later request will mention. One small-model call per new agent fixes that.
+    """
+    memory = get_agent_memory()
+    if memory.load(agent_name).description:
+        return False
+    runs = split_runs(list(get_execution_agent_logs().iter_entries(agent_name)))
+    if not runs:
+        return False
+    fingerprint = runs[0][0]
+    logs = ExecutionAgentLogStore.render_entries([e for run in runs[:2] for e in run])
+    text = await (summarizer or _openrouter_summarizer)(
+        _DESCRIBE_SYSTEM_PROMPT, f"Agent name: {agent_name}\n\nTask log:\n{logs}"
+    )
+    description, _ = parse_summary(text)
+    current = split_runs(list(get_execution_agent_logs().iter_entries(agent_name)))
+    if not description or not current or current[0][0] != fingerprint:
+        return False
+    state = memory.load(agent_name)
+    if state.description:  # compaction got there first
+        return False
+    state.description = description
+    memory.save(agent_name, state)
+    get_agent_roster().update_description(agent_name, description)
+    return True
+
+
+def schedule_description(agent_name: str, summarizer: Optional[Summarizer] = None) -> Optional[asyncio.Task]:
+    """Fire-and-forget `describe` for agents that don't have an LLM description yet."""
+    key = f"describe:{agent_key(agent_name)}"
+    if key in _in_flight or get_agent_memory().load(agent_name).description:
+        return None
+    try:
+        loop = asyncio.get_running_loop()
+    except RuntimeError:
+        return None
+
+    async def _run() -> None:
+        try:
+            await describe(agent_name, summarizer)
+        except Exception as exc:  # the heuristic description stays in place
+            logger.warning(f"[{agent_name}] describe failed: {exc}")
+        finally:
+            _in_flight.discard(key)
+
+    _in_flight.add(key)
+    task = loop.create_task(_run())
+    _tasks.add(task)
+    task.add_done_callback(_tasks.discard)
+    return task
+
+
 _DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data"
 _agent_memory = AgentMemoryStore(_DATA_DIR / "execution_agents")
 
@@ -302,5 +369,7 @@ __all__ = [
     "refresh_description",
     "render_history",
     "schedule_compaction",
+    "describe",
+    "schedule_description",
     "split_runs",
 ]

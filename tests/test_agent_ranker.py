@@ -76,3 +76,8 @@ def test_mentions_require_whole_words():
     agents = [rec("Bob"), rec("Email to Bob")]
     assert mentioned_agent_keys(agents, "Bobby says hi") == set()
     assert mentioned_agent_keys(agents, "[SUCCESS] Email to Bob: sent") == {agent_key("Bob"), agent_key("Email to Bob")}
+
+
+def test_search_finds_chinese_agent_names():
+    agents = [rec("给妈妈发邮件", "提醒妈妈周末吃饭"), rec("Flight to Tokyo")]
+    assert [r.name for r in search_agents(agents, "妈妈", now=NOW)] == ["给妈妈发邮件"]

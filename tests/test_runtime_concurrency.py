@@ -233,3 +233,49 @@ def test_a_stuck_turn_times_out_and_does_not_block_the_next(interaction, setting
     first, second = asyncio.run(run())
     assert not first.success and "timed out" in first.error
     assert second.success
+
+
+def test_waiting_for_a_busy_agent_counts_toward_the_timeout(stores, settings, monkeypatch):
+    """A run queued behind a long run of the same agent must not hold its batch open forever."""
+    async def no_dispatch(self, payload):
+        return None
+
+    monkeypatch.setattr(bm.ExecutionBatchManager, "_dispatch_to_interaction_agent", no_dispatch)
+
+    async def run():
+        mgr = bm.ExecutionBatchManager(timeout_seconds=0.05)
+        async with bm._agent_run_lock("Busy agent"):  # e.g. a long trigger run in progress
+            return await asyncio.wait_for(mgr.execute_agent("Busy agent", "follow-up"), timeout=1)
+
+    result = asyncio.run(run())
+    assert not result.success and result.error == "Timeout"
+
+
+def test_timed_out_user_turn_still_answers_the_user(interaction, settings, monkeypatch):
+    monkeypatch.setattr(settings, "interaction_turn_timeout_seconds", 0.05)
+
+    async def hanging_llm(**kwargs):
+        await asyncio.sleep(10)
+
+    monkeypatch.setattr(ia_runtime, "request_chat_completion", hanging_llm)
+    result = asyncio.run(interaction().execute("hello?"))
+    assert result.response == ia_runtime.TIMEOUT_REPLY
+    assert ia_runtime.TIMEOUT_REPLY in interaction.conversation.load_transcript()
+
+
+def test_text_narrated_alongside_wait_is_not_shown(interaction, monkeypatch):
+    async def llm(*, messages, **kwargs):
+        return llm_reply(tool_call("wait", reason="agent still working"), content="Waiting for the agent to finish.")
+
+    monkeypatch.setattr(ia_runtime, "request_chat_completion", llm)
+    result = asyncio.run(interaction().handle_agent_message("[SUCCESS] X: done"))
+    assert result.success and result.response == ""
+    assert "Waiting for the agent" not in interaction.conversation.load_transcript()
+
+
+def test_clear_history_runs_on_the_event_loop():
+    import inspect
+
+    from server.routes import chat
+
+    assert inspect.iscoroutinefunction(chat.clear_history)

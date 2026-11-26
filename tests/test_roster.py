@@ -111,3 +111,22 @@ def test_corrupt_roster_is_backed_up_not_overwritten(tmp_path):
     backups = list(tmp_path.glob("roster.json.corrupt-*"))
     assert len(backups) == 1 and "Email to Ali" in backups[0].read_text()
     assert AgentRoster(path).get_agents() == ["Flight to Tokyo"]
+
+
+def test_wrong_shape_roster_does_not_crash_startup(tmp_path):
+    for bad in ['{"agents": 5}', '{"agents": [{"name": "A", "run_count": "lots"}]}']:
+        path = tmp_path / "roster.json"
+        path.write_text(bad)
+        roster = AgentRoster(path)  # used to raise at import time and stop the server
+        assert roster.get_agents() == []
+        assert list(tmp_path.glob("roster.json.corrupt-*"))
+        for f in tmp_path.glob("roster.json.corrupt-*"):
+            f.unlink()
+
+
+def test_non_ascii_agent_names_are_matchable():
+    from server.services.execution.roster import unicode_tokens
+
+    assert "妈妈" in unicode_tokens("给妈妈发邮件")
+    assert unicode_tokens("Café menu") == ["café", "menu"]
+    assert name_similarity("给妈妈发邮件", "妈妈生日提醒") > 0

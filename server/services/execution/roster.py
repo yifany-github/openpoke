@@ -36,7 +36,23 @@ _GENERIC_NAME_TOKENS = {
     "a", "an", "and", "about", "agent", "draft", "email", "emails", "for", "forward",
     "from", "in", "of", "on", "re", "reply", "search", "send", "the", "to", "with",
 }
-_TOKEN_RE = re.compile(r"[a-z0-9]+")
+_TOKEN_RE = re.compile(r"\w+", re.UNICODE)
+_CJK_RE = re.compile(r"[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uac00-\ud7af]")
+
+
+def unicode_tokens(text: str) -> List[str]:
+    """Lowercased word tokens for any script. CJK runs have no spaces, so they are split
+    into overlapping character bigrams ("给妈妈发邮件" -> 给妈, 妈妈, 妈发, ...)."""
+    out: List[str] = []
+    for tok in _TOKEN_RE.findall((text or "").lower()):
+        tok = tok.replace("_", "")
+        if not tok:
+            continue
+        if _CJK_RE.search(tok) and len(tok) > 1:
+            out.extend(tok[i:i + 2] for i in range(len(tok) - 1))
+        else:
+            out.append(tok)
+    return out
 
 
 def agent_key(name: str) -> str:
@@ -53,7 +69,7 @@ def _fold(tok: str) -> str:
 
 def name_tokens(name: str) -> set[str]:
     """Content tokens of an agent name (generic verbs/stopwords removed, plurals folded)."""
-    return {_fold(tok) for tok in _TOKEN_RE.findall((name or "").lower()) if tok not in _GENERIC_NAME_TOKENS}
+    return {_fold(tok) for tok in unicode_tokens(name) if tok not in _GENERIC_NAME_TOKENS}
 
 
 SIMILARITY_THRESHOLD = 0.6
@@ -125,14 +141,7 @@ class AgentRoster:
         except Exception as exc:
             # Don't let the next write silently replace an unreadable file with a
             # one-agent roster: move it aside so it can be recovered by hand.
-            backup = self._roster_path.with_name(
-                f"{self._roster_path.name}.corrupt-{datetime.now(timezone.utc):%Y%m%dT%H%M%S}"
-            )
-            try:
-                os.replace(self._roster_path, backup)
-                logger.error(f"roster.json unreadable ({exc}); moved to {backup.name}")
-            except OSError as move_exc:  # pragma: no cover - defensive
-                logger.error(f"roster.json unreadable ({exc}); could not back it up: {move_exc}")
+            self._back_up_corrupt(exc)
             return [], True
 
         if isinstance(data, list):  # legacy v1: ["name", ...]
@@ -147,22 +156,38 @@ class AgentRoster:
                 migrated.append(AgentRecord(name=name, key=key))
             return migrated, True
 
-        agents = data.get("agents", []) if isinstance(data, dict) else []
-        records: List[AgentRecord] = []
-        for item in agents:
-            if not isinstance(item, dict) or not item.get("name"):
-                continue
-            records.append(
-                AgentRecord(
-                    name=str(item["name"]),
-                    key=str(item.get("key") or agent_key(item["name"])),
-                    description=str(item.get("description") or ""),
-                    created_at=item.get("created_at"),
-                    last_used_at=item.get("last_used_at"),
-                    run_count=int(item.get("run_count") or 0),
+        try:
+            agents = data.get("agents") or [] if isinstance(data, dict) else []
+            records: List[AgentRecord] = []
+            for item in agents:
+                if not isinstance(item, dict) or not item.get("name"):
+                    continue
+                records.append(
+                    AgentRecord(
+                        name=str(item["name"]),
+                        key=str(item.get("key") or agent_key(item["name"])),
+                        description=str(item.get("description") or ""),
+                        created_at=item.get("created_at"),
+                        last_used_at=item.get("last_used_at"),
+                        run_count=int(float(item.get("run_count") or 0)),
+                    )
                 )
-            )
+        except (TypeError, ValueError, AttributeError) as exc:
+            # Valid JSON, wrong shape. This runs at import time, so raising would stop the
+            # server from starting. Treat it like an unreadable file.
+            self._back_up_corrupt(exc)
+            return [], True
         return records, False
+
+    def _back_up_corrupt(self, exc: Exception) -> None:
+        backup = self._roster_path.with_name(
+            f"{self._roster_path.name}.corrupt-{datetime.now(timezone.utc):%Y%m%dT%H%M%S}"
+        )
+        try:
+            os.replace(self._roster_path, backup)
+            logger.error(f"roster.json unreadable ({exc}); moved to {backup.name}")
+        except OSError as move_exc:  # pragma: no cover - defensive
+            logger.error(f"roster.json unreadable ({exc}); could not back it up: {move_exc}")
 
     def load(self) -> None:
         """Load the registry, migrating the legacy list-of-names format."""

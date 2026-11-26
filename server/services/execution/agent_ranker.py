@@ -25,9 +25,8 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Iterable, List, Optional, Sequence, Set
 
-from .roster import AgentRecord
+from .roster import AgentRecord, unicode_tokens
 
-_TOKEN_RE = re.compile(r"[a-z0-9]+")
 _STOPWORDS = {
     "a", "an", "and", "are", "about", "at", "be", "can", "did", "do", "for", "from", "get",
     "has", "have", "he", "her", "him", "his", "i", "if", "in", "is", "it", "me", "my", "of",
@@ -44,7 +43,7 @@ RECENCY_HALF_LIFE_DAYS = 3.0
 
 def tokenize(text: str) -> List[str]:
     tokens = []
-    for tok in _TOKEN_RE.findall((text or "").lower()):
+    for tok in unicode_tokens(text):
         if tok in _STOPWORDS:
             continue
         if len(tok) > 3 and tok.endswith("s") and not tok.endswith("ss"):

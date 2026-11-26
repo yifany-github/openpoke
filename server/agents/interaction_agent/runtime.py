@@ -60,6 +60,9 @@ def _turn_lock() -> asyncio.Lock:
     return lock
 
 
+TIMEOUT_REPLY = "sorry, that one got stuck on my end. mind sending it again?"
+
+
 class InteractionAgentRuntime:
     """Manages the interaction agent's request processing."""
 
@@ -85,7 +88,12 @@ class InteractionAgentRuntime:
         """Handle a user-authored message."""
 
         async with _turn_lock():
-            return await self._bounded(self._execute_user_turn(user_message))
+            result = await self._bounded(self._execute_user_turn(user_message))
+            if not result.success and result.error and "timed out" in result.error:
+                # The user's message is logged; without this they would see no reply at all.
+                self.conversation_log.record_reply(TIMEOUT_REPLY)
+                result.response = TIMEOUT_REPLY
+            return result
 
     async def _execute_user_turn(self, user_message: str) -> InteractionResult:
         try:
@@ -226,6 +234,7 @@ class InteractionAgentRuntime:
             # response is `wait`: if another call in it was rejected or returned search
             # results, the model must see them.
             if all(call.name == "wait" for call in parsed_tool_calls):
+                summary.last_assistant_text = ""  # wait = stay silent, even if it narrated
                 break
         else:
             raise RuntimeError("Reached tool iteration limit without final response")
